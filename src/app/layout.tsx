@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { FloatingHomeButton } from "@/components/FloatingHomeButton";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -7,7 +8,7 @@ export const metadata: Metadata = {
     template: "%s | WHYME 미디어 교육 자료집",
   },
   description:
-    "가정에서 바로 실행할 수 있는 플랫폼 안전 설정, 체크리스트, 건강한 미디어 문화 자료를 모은 학부모용 아카이브입니다.",
+    "가정에서 바로 실행할 수 있는 플랫폼 안전 설정, 체크리스트, 건강한 미디어 문화 자료를 모은 WHYME의 미디어 교육 자료 아카이브입니다.",
   openGraph: {
     title: "WHYME 미디어 교육 자료집",
     description:
@@ -24,7 +25,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className="h-full antialiased">
-      <body className="min-h-full">{children}</body>
+      <body className="min-h-full">
+        {children}
+        <FloatingHomeButton />
+      </body>
     </html>
   );
 }

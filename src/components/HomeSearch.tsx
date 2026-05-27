@@ -51,7 +51,7 @@ export function HomeSearch({ concerns, resources }: HomeSearchProps) {
   const hasResults = concernResults.length > 0 || resourceResults.length > 0;
 
   return (
-    <div className="mt-8 w-full max-w-xl">
+    <div className="relative mt-8 w-full max-w-xl">
       <label htmlFor="home-search" className="sr-only">
         자료 검색
       </label>
@@ -65,7 +65,7 @@ export function HomeSearch({ concerns, resources }: HomeSearchProps) {
       />
 
       {normalizedQuery ? (
-        <div className="mt-3 rounded-lg border border-orange-100 bg-white p-3 shadow-sm">
+        <div className="absolute left-0 right-0 top-full z-30 mt-3 max-h-[min(28rem,60vh)] overflow-y-auto rounded-lg border border-orange-100 bg-white p-3 shadow-lg">
           {hasResults ? (
             <div className="grid gap-3">
               {concernResults.length > 0 ? (

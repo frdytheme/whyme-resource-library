@@ -7,10 +7,10 @@ const categoryLabels: Record<Resource["category"], string> = {
   healthy_media_culture: "건강한 미디어 문화",
 };
 
-const difficultyLabels: Record<Resource["difficulty"], string> = {
-  easy: "쉬움",
-  normal: "보통",
-  advanced: "심화",
+const categoryBadgeStyles: Record<Resource["category"], string> = {
+  platform_safety: "bg-[#FF6B35]/10 text-[#FF6B35]",
+  checklist_contract: "bg-[#0A7C6E]/10 text-[#0A7C6E]",
+  healthy_media_culture: "bg-[#F59E0B]/15 text-[#B86600]",
 };
 
 type ResourceCardProps = {
@@ -21,12 +21,23 @@ export function ResourceCard({ resource }: ResourceCardProps) {
   return (
     <Link
       href={`/resources/${resource.id}`}
-      className="group flex h-full flex-col rounded-lg border border-orange-100 bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:border-[#FF6B35] hover:shadow-md"
+      className={`group flex h-full flex-col rounded-lg border p-5 shadow-sm transition duration-200 hover:-translate-y-1 hover:shadow-md ${
+        resource.isRecommended
+          ? "border-[#FF6B35]/45 bg-[#FFF4EE] ring-1 ring-[#FF6B35]/10 hover:border-[#FF6B35]"
+          : "border-orange-100 bg-white hover:border-[#FF6B35]"
+      }`}
     >
       <div className="mb-4 flex items-center gap-3">
-        <span className="rounded-md bg-[#FF6B35]/10 px-2.5 py-1 text-xs font-medium text-[#FF6B35]">
+        <span
+          className={`rounded-md px-2.5 py-1 text-xs font-medium ${categoryBadgeStyles[resource.category]}`}
+        >
           {categoryLabels[resource.category]}
         </span>
+        {resource.isRecommended ? (
+          <span className="rounded-md bg-white px-2.5 py-1 text-xs font-semibold text-[#FF6B35] shadow-sm">
+            추천
+          </span>
+        ) : null}
       </div>
 
       <h3 className="text-base font-semibold leading-6 text-stone-950 group-hover:text-[#FF6B35]">
@@ -46,11 +57,7 @@ export function ResourceCard({ resource }: ResourceCardProps) {
           </span>
         ))}
       </div>
-
-      <div className="mt-auto flex items-center justify-between gap-3 pt-5 text-xs text-stone-500">
-        <span>{difficultyLabels[resource.difficulty]}</span>
-        <span className="text-right">{resource.recommendedAge.join(" · ")}</span>
-      </div>
+      <div className="mt-auto pt-5" />
     </Link>
   );
 }

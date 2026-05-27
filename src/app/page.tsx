@@ -1,19 +1,10 @@
 import Link from "next/link";
+import Image from "next/image";
 import { HomeSearch } from "@/components/HomeSearch";
 import { concerns } from "@/data/concerns";
-import { resources } from "@/data/resources";
+import { visibleResources } from "@/data/visibleResources";
 
-const contributionCells = Array.from({ length: 42 }, (_, index) => {
-  const tones = [
-    "bg-[#FAFAFA]",
-    "bg-[#F59E0B]/25",
-    "bg-[#F59E0B]/55",
-    "bg-[#FF6B35]/60",
-    "bg-[#0A7C6E]/45",
-  ];
-
-  return tones[(index * 7 + index) % tones.length];
-});
+const kakaoChannelUrl = "https://linktr.ee/why_me_brand";
 
 export default function Home() {
   return (
@@ -29,14 +20,20 @@ export default function Home() {
               아이의 미디어 사용이 걱정될 때, 지금 필요한 자료를 고민별로 찾거나 전체 자료실에서 천천히 살펴보세요.
             </p>
 
-            <HomeSearch concerns={concerns} resources={resources} />
+            <HomeSearch concerns={concerns} resources={visibleResources} />
 
-            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+            <div className="mt-8 grid gap-3 sm:grid-cols-3">
               <Link
                 href="/concerns"
                 className="rounded-lg border border-[#FF6B35] bg-[#FF6B35] px-5 py-4 text-sm font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[#E85B2B] hover:shadow-md"
               >
                 무엇이 필요하신가요?
+              </Link>
+              <Link
+                href="/packages"
+                className="rounded-lg border border-[#0A7C6E]/30 bg-white px-5 py-4 text-sm font-semibold text-[#0A7C6E] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#0A7C6E] hover:bg-[#F0FAF8] hover:shadow-md"
+              >
+                상황별 추천 설정 모음
               </Link>
               <Link
                 href="/resources"
@@ -47,16 +44,25 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="w-full max-w-sm rounded-lg border border-orange-100 bg-[#FAFAFA] p-4">
-            <div className="mb-3 flex items-center justify-between text-xs text-stone-500">
-              <span>자료 분포</span>
-              <span>{resources.length}개 자료</span>
+          <div className="flex w-full max-w-sm flex-col gap-3 lg:max-w-md">
+            <div className="flex w-full justify-center rounded-lg border border-orange-100 bg-[#FAFAFA] px-8 py-10 shadow-sm sm:px-10">
+              <Image
+                src="/images/brand/whyme-logo.png"
+                alt="WHYME 로고"
+                width={1200}
+                height={600}
+                priority
+                className="h-auto w-full max-w-xs object-contain sm:max-w-sm"
+              />
             </div>
-            <div className="grid grid-cols-7 gap-1.5" aria-hidden="true">
-              {contributionCells.map((tone, index) => (
-                <span key={index} className={`aspect-square rounded-sm ${tone}`} />
-              ))}
-            </div>
+            <a
+              href={kakaoChannelUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex w-full items-center justify-center rounded-lg border border-[#FF6B35]/25 bg-white px-5 py-4 text-sm font-semibold text-[#FF6B35] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#FF6B35] hover:bg-[#FFF4EE] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/35 focus:ring-offset-2"
+            >
+              와이미 교육 문의
+            </a>
           </div>
         </div>
       </section>

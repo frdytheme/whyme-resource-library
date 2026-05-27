@@ -3,11 +3,13 @@
 import Image from "next/image";
 import {
   KeyboardEvent,
+  MouseEvent,
   PointerEvent,
   useCallback,
   useEffect,
   useRef,
   useState,
+  WheelEvent,
 } from "react";
 
 type GuideImage = {
@@ -21,6 +23,9 @@ type GuideImage = {
 type GuideImageCarouselProps = {
   images: GuideImage[];
 };
+
+const minZoomScale = 1;
+const maxZoomScale = 4;
 
 export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
   const imageCount = images.length;
@@ -227,7 +232,7 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
   return (
     <>
       <section
-        className="mb-0 overflow-hidden rounded-lg border border-orange-100 bg-white shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B35]/30"
+        className="mb-0 rounded-b-lg border-x border-b border-orange-100 bg-white shadow-sm outline-none focus-visible:ring-2 focus-visible:ring-[#FF6B35]/30"
         tabIndex={0}
         onKeyDown={handleKeyDown}
         aria-label="가이드 이미지 슬라이드"
@@ -339,14 +344,7 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
             </button>
 
             <div className="overflow-hidden rounded-lg bg-white shadow-2xl">
-              <Image
-                src={activeImage.src}
-                alt={activeImage.alt}
-                width={activeImage.width}
-                height={activeImage.height}
-                className="max-h-[82vh] w-full object-contain"
-                draggable={false}
-              />
+              <ZoomableModalImage key={activeImage.src} image={activeImage} />
               <div className="flex items-center justify-between gap-3 border-t border-orange-100 px-4 py-3">
                 <div>
                   <p className="text-sm font-semibold text-stone-950">{activeImage.label}</p>
@@ -379,6 +377,157 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
       ) : null}
     </>
   );
+}
+
+function ZoomableModalImage({ image }: { image: GuideImage }) {
+  const [scale, setScale] = useState(minZoomScale);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const [isPanning, setIsPanning] = useState(false);
+  const [isPinching, setIsPinching] = useState(false);
+  const scaleRef = useRef(scale);
+  const activePointers = useRef(new Map<number, { x: number; y: number }>());
+  const panStart = useRef({ x: 0, y: 0 });
+  const lastPinchDistance = useRef<number | null>(null);
+
+  useEffect(() => {
+    scaleRef.current = scale;
+  }, [scale]);
+
+  function updateScale(nextScale: number) {
+    const clampedScale = clamp(nextScale, minZoomScale, maxZoomScale);
+
+    setScale(clampedScale);
+    scaleRef.current = clampedScale;
+
+    if (clampedScale === minZoomScale) {
+      setOffset({ x: 0, y: 0 });
+    }
+  }
+
+  function handleWheel(event: WheelEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const zoomStep = event.deltaY > 0 ? -0.2 : 0.2;
+    updateScale(scaleRef.current + zoomStep);
+  }
+
+  function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
+    event.stopPropagation();
+    event.currentTarget.setPointerCapture(event.pointerId);
+    activePointers.current.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+    });
+
+    if (activePointers.current.size === 1 && scaleRef.current > minZoomScale) {
+      panStart.current = {
+        x: event.clientX - offset.x,
+        y: event.clientY - offset.y,
+      };
+      setIsPanning(true);
+    }
+
+    if (activePointers.current.size === 2) {
+      lastPinchDistance.current = getPointerDistance(activePointers.current);
+      setIsPanning(false);
+      setIsPinching(true);
+    }
+  }
+
+  function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
+    if (!activePointers.current.has(event.pointerId)) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+    activePointers.current.set(event.pointerId, {
+      x: event.clientX,
+      y: event.clientY,
+    });
+
+    if (activePointers.current.size >= 2) {
+      const distance = getPointerDistance(activePointers.current);
+
+      if (distance && lastPinchDistance.current) {
+        updateScale(scaleRef.current * (distance / lastPinchDistance.current));
+      }
+
+      lastPinchDistance.current = distance;
+      return;
+    }
+
+    if (isPanning && scaleRef.current > minZoomScale) {
+      setOffset({
+        x: event.clientX - panStart.current.x,
+        y: event.clientY - panStart.current.y,
+      });
+    }
+  }
+
+  function handlePointerEnd(event: PointerEvent<HTMLDivElement>) {
+    event.stopPropagation();
+    activePointers.current.delete(event.pointerId);
+    lastPinchDistance.current =
+      activePointers.current.size >= 2 ? getPointerDistance(activePointers.current) : null;
+    setIsPanning(false);
+    setIsPinching(activePointers.current.size >= 2);
+  }
+
+  function handleDoubleClick(event: MouseEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (scaleRef.current > minZoomScale) {
+      updateScale(minZoomScale);
+      return;
+    }
+
+    updateScale(2);
+  }
+
+  return (
+    <div
+      className={`flex max-h-[82vh] touch-none select-none items-center justify-center overflow-hidden bg-[#FAFAFA] ${
+        scale > minZoomScale ? (isPanning ? "cursor-grabbing" : "cursor-grab") : "cursor-zoom-in"
+      }`}
+      onClick={(event) => event.stopPropagation()}
+      onDoubleClick={handleDoubleClick}
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerEnd}
+      onPointerCancel={handlePointerEnd}
+      onWheel={handleWheel}
+    >
+      <Image
+        src={image.src}
+        alt={image.alt}
+        width={image.width}
+        height={image.height}
+        className="max-h-[82vh] w-full object-contain"
+        draggable={false}
+        style={{
+          transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${scale})`,
+          transition: isPanning || isPinching ? "none" : "transform 160ms ease-out",
+        }}
+      />
+    </div>
+  );
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(Math.max(value, min), max);
+}
+
+function getPointerDistance(pointers: Map<number, { x: number; y: number }>) {
+  const [firstPointer, secondPointer] = Array.from(pointers.values());
+
+  if (!firstPointer || !secondPointer) {
+    return null;
+  }
+
+  return Math.hypot(firstPointer.x - secondPointer.x, firstPointer.y - secondPointer.y);
 }
 
 function getActiveIndex(

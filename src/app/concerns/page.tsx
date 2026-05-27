@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
-import { Suspense } from "react";
 import Link from "next/link";
+import { Suspense } from "react";
+import { BackButton } from "@/components/BackButton";
 import { ConcernResourceExplorer } from "@/components/ConcernResourceExplorer";
 import { concerns } from "@/data/concerns";
-import { resources } from "@/data/resources";
+import { visibleResources } from "@/data/visibleResources";
 
 export const metadata: Metadata = {
   title: "고민별 자료 찾기",
@@ -18,21 +19,24 @@ export default function ConcernsPage() {
           <Link href="/" className="text-sm font-medium text-[#0A7C6E] hover:text-[#075F54]">
             홈으로 돌아가기
           </Link>
-          <div className="mt-6 max-w-2xl">
-            <p className="text-sm font-medium text-[#0A7C6E]">무엇이 필요하신가요?</p>
-            <h1 className="mt-2 text-3xl font-semibold leading-tight text-stone-950 sm:text-4xl">
-              대표 질문에서 고르거나 검색해보세요
-            </h1>
-            <p className="mt-4 text-base leading-7 text-stone-600">
-              자주 찾는 고민은 먼저 보여드리고, 더 구체적인 상황은 검색으로 찾을 수 있게 정리했습니다.
-            </p>
+          <div className="flex items-start justify-between gap-5">
+            <div className="mt-6 max-w-2xl">
+              <p className="text-sm font-medium text-[#0A7C6E]">무엇이 필요하신가요?</p>
+              <h1 className="mt-2 text-3xl font-semibold leading-tight text-stone-950 sm:text-4xl">
+                대표 질문에서 고르거나 검색해보세요
+              </h1>
+              <p className="mt-4 text-base leading-7 text-stone-600">
+                미디어 관련 고민을 검색하시면 교육 자료를 추천해 드릴게요.
+              </p>
+            </div>
+            <BackButton />
           </div>
         </div>
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-6 lg:px-8">
         <Suspense fallback={null}>
-          <ConcernResourceExplorer concerns={concerns} resources={resources} />
+          <ConcernResourceExplorer concerns={concerns} resources={visibleResources} />
         </Suspense>
       </section>
     </main>

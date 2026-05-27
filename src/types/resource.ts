@@ -55,16 +55,48 @@ export type Resource = {
   keywords: string[];
   tags: string[];
   relatedConcerns: ConcernId[];
+  isHidden?: boolean;
+  isRecommended?: boolean;
   difficulty: ResourceDifficulty;
   estimatedTime: string;
   recommendedAge: string[];
   image?: string;
+  imageGuideGroups?: ImageGuideGroup[];
+  videoGuides?: VideoGuide[];
   youtubeId?: string;
   downloadUrl?: string;
 };
 
+export type ImageGuideGroup = {
+  id: string;
+  label: string;
+  directory: string;
+};
+
+export type VideoGuide = {
+  title: string;
+  url: string;
+  description?: string;
+};
+
 export type Concern = {
   id: ConcernId;
+  title: string;
+  description: string;
+  keywords: string[];
+  resourceIds: string[];
+};
+
+export type PackageId =
+  | "new-semester-safety"
+  | "before-youtube-start"
+  | "before-kakao-start"
+  | "groupchat-safety"
+  | "sns-account-start"
+  | "game-chat-safety";
+
+export type ResourcePackage = {
+  id: PackageId;
   title: string;
   description: string;
   keywords: string[];

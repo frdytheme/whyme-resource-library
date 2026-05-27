@@ -3,8 +3,13 @@ import path from "node:path";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { GuideImageGroup, GuideImageTabs } from "@/components/GuideImageTabs";
-import { resources } from "@/data/resources";
+import {
+  ResourceReturnIconButton,
+  ResourceReturnTextLink,
+} from "@/components/ResourceReturnControls";
+import { visibleResources } from "@/data/visibleResources";
 import { Resource } from "@/types/resource";
 
 type ResourceDetailPageProps = {
@@ -27,27 +32,27 @@ const categoryLabels: Record<Resource["category"], string> = {
   healthy_media_culture: "건강한 미디어 문화",
 };
 
-const difficultyLabels: Record<Resource["difficulty"], string> = {
-  easy: "쉬움",
-  normal: "보통",
-  advanced: "심화",
+const categoryBadgeStyles: Record<Resource["category"], string> = {
+  platform_safety: "bg-[#FF6B35]/10 text-[#FF6B35]",
+  checklist_contract: "bg-[#0A7C6E]/10 text-[#0A7C6E]",
+  healthy_media_culture: "bg-[#F59E0B]/15 text-[#B86600]",
 };
 
 const guideGroupLabels: Record<string, string> = {
   default: "이미지 가이드",
   pc: "PC 버전",
-  mobile: "모바일 버전",
+  mobile: "이미지 가이드(Phone)",
 };
 
 export function generateStaticParams() {
-  return resources.map((resource) => ({
+  return visibleResources.map((resource) => ({
     id: resource.id,
   }));
 }
 
 export async function generateMetadata({ params }: ResourceDetailPageProps): Promise<Metadata> {
   const { id } = await params;
-  const resource = resources.find((item) => item.id === id);
+  const resource = visibleResources.find((item) => item.id === id);
 
   if (!resource) {
     return {
@@ -63,46 +68,76 @@ export async function generateMetadata({ params }: ResourceDetailPageProps): Pro
 
 export default async function ResourceDetailPage({ params }: ResourceDetailPageProps) {
   const { id } = await params;
-  const resource = resources.find((item) => item.id === id);
+  const resource = visibleResources.find((item) => item.id === id);
 
   if (!resource) {
     notFound();
   }
 
   const guideImageGroups = getGuideImageGroups(resource);
+  const downloadUrl = getAvailableDownloadUrl(resource);
 
   return (
     <main className="min-h-screen bg-[#FAFAFA] text-stone-950">
       <section className="border-b border-orange-100 bg-white">
         <div className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-6 lg:px-8">
-          <Link href="/resources" className="text-sm font-medium text-[#0A7C6E] hover:text-[#075F54]">
-            전체 자료로 돌아가기
-          </Link>
-          <div className="mt-6 max-w-3xl">
-            <span className="rounded-md bg-[#FF6B35]/10 px-2.5 py-1 text-xs font-medium text-[#FF6B35]">
-              {categoryLabels[resource.category]}
-            </span>
-            <h1 className="mt-4 text-3xl font-semibold leading-tight text-stone-950 sm:text-4xl">
-              {resource.title}
-            </h1>
-            <p className="mt-4 text-base leading-7 text-stone-600">{resource.description}</p>
+          <Suspense
+            fallback={
+              <Link href="/resources" className="text-sm font-medium text-[#0A7C6E] hover:text-[#075F54]">
+                전체 자료로 돌아가기
+              </Link>
+            }
+          >
+            <ResourceReturnTextLink />
+          </Suspense>
+          <div className="flex items-start justify-between gap-5">
+            <div className="mt-6 max-w-3xl">
+              <span
+                className={`rounded-md px-2.5 py-1 text-xs font-medium ${categoryBadgeStyles[resource.category]}`}
+              >
+                {categoryLabels[resource.category]}
+              </span>
+              <h1 className="mt-4 text-3xl font-semibold leading-tight text-stone-950 sm:text-4xl">
+                {resource.title}
+              </h1>
+              <p className="mt-4 text-base leading-7 text-stone-600">{resource.description}</p>
+            </div>
+            <Suspense
+              fallback={
+                <Link
+                  href="/resources"
+                  aria-label="뒤로 가기"
+                  title="뒤로 가기"
+                  className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-lg border border-orange-100 bg-[#FAFAFA] text-stone-700 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#FF6B35] hover:bg-[#FFF4EE] hover:text-[#FF6B35] hover:shadow-md focus:outline-none focus:ring-2 focus:ring-[#FF6B35]/35 focus:ring-offset-2"
+                >
+                  <svg
+                    aria-hidden="true"
+                    viewBox="0 0 24 24"
+                    className="h-5 w-5"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                  >
+                    <path d="m15 18-6-6 6-6" />
+                  </svg>
+                </Link>
+              }
+            >
+              <ResourceReturnIconButton />
+            </Suspense>
           </div>
         </div>
       </section>
 
       <section className="mx-auto grid w-full max-w-6xl gap-5 px-5 pb-16 pt-8 sm:px-6 sm:pb-20 lg:grid-cols-[minmax(0,760px)_320px] lg:items-start lg:justify-center lg:px-8">
         <div className="min-w-0">
-          <GuideImageTabs groups={guideImageGroups} />
+          <GuideImageTabs groups={guideImageGroups} videoGuides={resource.videoGuides} />
         </div>
 
         <aside className="rounded-lg border border-orange-100 bg-white p-5 shadow-sm lg:sticky lg:top-6 lg:mt-[52px]">
-          <dl className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            <div>
-              <dt className="text-xs font-medium text-stone-500">난이도</dt>
-              <dd className="mt-1 text-sm font-semibold text-stone-950">
-                {difficultyLabels[resource.difficulty]}
-              </dd>
-            </div>
+          <dl>
             <div>
               <dt className="text-xs font-medium text-stone-500">권장 연령</dt>
               <dd className="mt-1 text-sm font-semibold text-stone-950">
@@ -110,6 +145,18 @@ export default async function ResourceDetailPage({ params }: ResourceDetailPageP
               </dd>
             </div>
           </dl>
+
+          {downloadUrl ? (
+            <div className="mt-5 border-t border-orange-100 pt-5">
+              <a
+                href={downloadUrl}
+                download
+                className="inline-flex w-full items-center justify-center rounded-lg border border-[#FF6B35]/25 bg-[#FFF4EE] px-4 py-3 text-sm font-semibold text-[#FF6B35] transition hover:border-[#FF6B35] hover:bg-white"
+              >
+                인쇄용 PDF 다운로드
+              </a>
+            </div>
+          ) : null}
 
           <div className="mt-5 border-t border-orange-100 pt-5">
             <h2 className="text-sm font-semibold text-stone-950">태그</h2>
@@ -132,7 +179,41 @@ export default async function ResourceDetailPage({ params }: ResourceDetailPageP
   );
 }
 
+function getAvailableDownloadUrl(resource: Resource) {
+  if (!resource.downloadUrl) {
+    return null;
+  }
+
+  const downloadPath = path.join(
+    process.cwd(),
+    "public",
+    ...resource.downloadUrl.replace(/^\//, "").split("/"),
+  );
+
+  return fs.existsSync(downloadPath) ? resource.downloadUrl : null;
+}
+
 function getGuideImageGroups(resource: Resource): GuideImageGroup[] {
+  if (resource.imageGuideGroups && resource.imageGuideGroups.length > 0) {
+    return resource.imageGuideGroups
+      .map((group) => {
+        const groupDir = path.join(
+          process.cwd(),
+          "public",
+          "images",
+          "guides",
+          group.directory,
+        );
+
+        return {
+          id: group.id,
+          label: group.label,
+          images: getGuideImages(resource, group.id, groupDir, group.directory),
+        };
+      })
+      .filter((group) => group.images.length > 0);
+  }
+
   const dir = path.join(process.cwd(), "public", "images", "guides", resource.id);
 
   if (!fs.existsSync(dir)) {
@@ -149,7 +230,8 @@ function getGuideImageGroups(resource: Resource): GuideImageGroup[] {
   return groupIds
     .map((groupId) => {
       const groupDir = groupId === "default" ? dir : path.join(dir, groupId);
-      const images = getGuideImages(resource, groupId, groupDir);
+      const directory = groupId === "default" ? resource.id : `${resource.id}/${groupId}`;
+      const images = getGuideImages(resource, groupId, groupDir, directory);
       const label =
         groupId === "default" && hasMobileGroup
           ? "이미지 가이드(PC)"
@@ -168,6 +250,7 @@ function getGuideImages(
   resource: Resource,
   groupId: string,
   dir: string,
+  directory = resource.id,
 ): GuideImage[] {
   if (!fs.existsSync(dir)) {
     return [];
@@ -184,8 +267,7 @@ function getGuideImages(
       const isCover = file === "cover.webp";
       const stepMatch = file.match(/^step-(\d+)\.webp$/);
       const stepNumber = stepMatch ? Number(stepMatch[1]) : null;
-      const prefix =
-        groupId === "default" ? `/images/guides/${resource.id}` : `/images/guides/${resource.id}/${groupId}`;
+      const prefix = `/images/guides/${directory}`;
 
       return {
         src: `${prefix}/${file}`,
