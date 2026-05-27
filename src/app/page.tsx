@@ -1,65 +1,65 @@
-import Image from "next/image";
+import Link from "next/link";
+import { HomeSearch } from "@/components/HomeSearch";
+import { concerns } from "@/data/concerns";
+import { resources } from "@/data/resources";
+
+const contributionCells = Array.from({ length: 42 }, (_, index) => {
+  const tones = [
+    "bg-[#FAFAFA]",
+    "bg-[#F59E0B]/25",
+    "bg-[#F59E0B]/55",
+    "bg-[#FF6B35]/60",
+    "bg-[#0A7C6E]/45",
+  ];
+
+  return tones[(index * 7 + index) % tones.length];
+});
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
+    <main className="min-h-screen bg-[#FAFAFA] text-stone-950">
+      <section className="border-b border-orange-100 bg-white">
+        <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center gap-10 px-5 py-12 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
+          <div className="max-w-2xl">
+            <p className="text-sm font-medium text-[#0A7C6E]">WHYME Resource Library</p>
+            <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-normal text-stone-950 sm:text-5xl">
+              가정에서 바로 실행할 수 있는 미디어 교육 자료집
+            </h1>
+            <p className="mt-5 max-w-xl text-base leading-7 text-stone-600 sm:text-lg">
+              아이의 미디어 사용이 걱정될 때, 지금 필요한 자료를 고민별로 찾거나 전체 자료실에서 천천히 살펴보세요.
+            </p>
+
+            <HomeSearch concerns={concerns} resources={resources} />
+
+            <div className="mt-8 grid gap-3 sm:grid-cols-2">
+              <Link
+                href="/concerns"
+                className="rounded-lg border border-[#FF6B35] bg-[#FF6B35] px-5 py-4 text-sm font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[#E85B2B] hover:shadow-md"
+              >
+                무엇이 필요하신가요?
+              </Link>
+              <Link
+                href="/resources"
+                className="rounded-lg border border-[#F59E0B]/45 bg-white px-5 py-4 text-sm font-semibold text-stone-950 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#FF6B35] hover:shadow-md"
+              >
+                전체 자료 보기
+              </Link>
+            </div>
+          </div>
+
+          <div className="w-full max-w-sm rounded-lg border border-orange-100 bg-[#FAFAFA] p-4">
+            <div className="mb-3 flex items-center justify-between text-xs text-stone-500">
+              <span>자료 분포</span>
+              <span>{resources.length}개 자료</span>
+            </div>
+            <div className="grid grid-cols-7 gap-1.5" aria-hidden="true">
+              {contributionCells.map((tone, index) => (
+                <span key={index} className={`aspect-square rounded-sm ${tone}`} />
+              ))}
+            </div>
+          </div>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+      </section>
+    </main>
   );
 }
