@@ -17,7 +17,6 @@ export const resources: Resource[] = [
     recommendedAge: ["초등 고학년", "중학생"],
     videoGuides: [{ title: "영상 가이드", url: "" }],
     image: "/images/guides/wmqi-content-evaluation-sheet.webp",
-    downloadUrl: "/downloads/wmqi-content-evaluation-sheet.pdf",
     isRecommended: true,
   },
   {
@@ -466,7 +465,6 @@ export const resources: Resource[] = [
     estimatedTime: "10분",
     recommendedAge: ["초등 고학년", "중학생", "고등학생"],
     videoGuides: [{ title: "영상 가이드", url: "" }],
-    downloadUrl: "/downloads/gaslighting-checklist.pdf",
   },
   {
     id: "grooming-checklist",
@@ -483,7 +481,6 @@ export const resources: Resource[] = [
     estimatedTime: "10분",
     recommendedAge: ["초등 고학년", "중학생", "고등학생"],
     videoGuides: [{ title: "영상 가이드", url: "" }],
-    downloadUrl: "/downloads/grooming-checklist.pdf",
   },
   {
     id: "school-violence-checklist",
@@ -499,7 +496,6 @@ export const resources: Resource[] = [
     estimatedTime: "10분",
     recommendedAge: ["초등 고학년", "중학생", "고등학생"],
     videoGuides: [{ title: "영상 가이드", url: "" }],
-    downloadUrl: "/downloads/school-violence-checklist.pdf",
   },
   {
     id: "gambling-warning-checklist",
@@ -515,7 +511,6 @@ export const resources: Resource[] = [
     estimatedTime: "10분",
     recommendedAge: ["중학생", "고등학생"],
     videoGuides: [{ title: "영상 가이드", url: "" }],
-    downloadUrl: "/downloads/gambling-warning-checklist.pdf",
   },
   {
     id: "school-violence-victim-guide",
@@ -532,7 +527,6 @@ export const resources: Resource[] = [
     estimatedTime: "10분",
     recommendedAge: ["초등 고학년", "중학생", "고등학생"],
     videoGuides: [{ title: "영상 가이드", url: "" }],
-    downloadUrl: "/downloads/school-violence-victim-guide.pdf",
     isRecommended: true,
   },
   {
@@ -568,7 +562,6 @@ export const resources: Resource[] = [
     estimatedTime: "5분",
     recommendedAge: ["초등 고학년", "중학생"],
     videoGuides: [{ title: "영상 가이드", url: "" }],
-    downloadUrl: "/downloads/spending-wait-contract.pdf",
   },
   {
     id: "wmqi-youtuber-selection",
@@ -603,7 +596,6 @@ export const resources: Resource[] = [
     estimatedTime: "7분",
     recommendedAge: ["초등 저학년", "초등 고학년", "중학생"],
     videoGuides: [{ title: "영상 가이드", url: "" }],
-    downloadUrl: "/downloads/media-yellow-list.pdf",
   },
   {
     id: "media-red-list",
@@ -621,6 +613,5 @@ export const resources: Resource[] = [
     estimatedTime: "7분",
     recommendedAge: ["초등 고학년", "중학생"],
     videoGuides: [{ title: "영상 가이드", url: "" }],
-    downloadUrl: "/downloads/media-red-list.pdf",
   },
 ];
