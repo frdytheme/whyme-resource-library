@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import {
   KeyboardEvent,
   MouseEvent,
@@ -308,14 +307,15 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
                 role="button"
                 aria-label={`${image.label} 크게 보기`}
               >
-                <Image
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
                   src={image.src}
                   alt={image.alt}
                   width={image.width}
                   height={image.height}
                   className="h-auto w-full"
-                  priority={index === slideIndex || !hasMultipleImages}
-                  sizes="(min-width: 1024px) 760px, calc(100vw - 40px)"
+                  loading={index === slideIndex || !hasMultipleImages ? "eager" : "lazy"}
+                  decoding="async"
                   draggable={false}
                 />
               </div>
@@ -682,13 +682,15 @@ function ZoomableModalImage({
         </>
       ) : null}
 
-      <Image
+      {/* eslint-disable-next-line @next/next/no-img-element */}
+      <img
         src={image.src}
         alt={image.alt}
         width={image.width}
         height={image.height}
         className={`w-full object-contain ${isFullscreen ? "max-h-screen" : "max-h-[82vh]"}`}
-        sizes="100vw"
+        loading="eager"
+        decoding="async"
         draggable={false}
         style={{
           transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${scale})`,
