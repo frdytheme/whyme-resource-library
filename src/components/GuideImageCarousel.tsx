@@ -5,6 +5,7 @@ import {
   KeyboardEvent,
   MouseEvent,
   PointerEvent,
+  RefObject,
   useCallback,
   useEffect,
   useRef,
@@ -36,8 +37,10 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
   const [isJumping, setIsJumping] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false);
   const pointerStartX = useRef<number | null>(null);
   const navigationLocked = useRef(false);
+  const fullscreenImageRef = useRef<HTMLDivElement | null>(null);
 
   const canNavigate = !isAnimating && !isDragging && !isJumping;
 
@@ -128,6 +131,28 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
       document.body.style.overflow = "";
     };
   }, [goNext, goPrevious, hasMultipleImages, isZoomOpen]);
+
+  useEffect(() => {
+    function handleFullscreenChange() {
+      setIsFullscreen(document.fullscreenElement === fullscreenImageRef.current);
+    }
+
+    document.addEventListener("fullscreenchange", handleFullscreenChange);
+
+    return () => {
+      document.removeEventListener("fullscreenchange", handleFullscreenChange);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (isZoomOpen) {
+      return;
+    }
+
+    if (document.fullscreenElement === fullscreenImageRef.current) {
+      document.exitFullscreen().catch(() => undefined);
+    }
+  }, [isZoomOpen]);
 
   if (imageCount === 0) {
     return null;
@@ -227,6 +252,27 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
     } else {
       setSlideIndex((current) => current + 1);
     }
+  }
+
+  function closeZoomModal() {
+    if (document.fullscreenElement === fullscreenImageRef.current) {
+      document.exitFullscreen().catch(() => undefined);
+    }
+
+    setIsZoomOpen(false);
+  }
+
+  function toggleFullscreen() {
+    if (!fullscreenImageRef.current || !document.fullscreenEnabled) {
+      return;
+    }
+
+    if (document.fullscreenElement === fullscreenImageRef.current) {
+      document.exitFullscreen().catch(() => undefined);
+      return;
+    }
+
+    fullscreenImageRef.current.requestFullscreen().catch(() => undefined);
   }
 
   return (
@@ -331,12 +377,49 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
           role="dialog"
           aria-modal="true"
           aria-label="확대 이미지 보기"
-          onClick={() => setIsZoomOpen(false)}
+          onClick={closeZoomModal}
         >
-          <div className="relative max-h-full w-full max-w-6xl" onClick={(event) => event.stopPropagation()}>
+          <div
+            className="relative flex max-h-full w-full max-w-6xl flex-col justify-center bg-transparent"
+            onClick={(event) => event.stopPropagation()}
+          >
             <button
               type="button"
-              onClick={() => setIsZoomOpen(false)}
+              onClick={toggleFullscreen}
+              className="absolute right-14 top-0 z-10 inline-flex h-10 -translate-y-12 items-center gap-2 rounded-full bg-white px-4 text-sm font-semibold text-stone-950 shadow-sm transition hover:bg-[#FF6B35] hover:text-white"
+              aria-label={isFullscreen ? "전체화면 종료" : "전체보기"}
+            >
+              <svg
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="h-4 w-4"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+              >
+                {isFullscreen ? (
+                  <>
+                    <path d="M8 3v5H3" />
+                    <path d="M16 3v5h5" />
+                    <path d="M8 21v-5H3" />
+                    <path d="M16 21v-5h5" />
+                  </>
+                ) : (
+                  <>
+                    <path d="M8 3H3v5" />
+                    <path d="M16 3h5v5" />
+                    <path d="M8 21H3v-5" />
+                    <path d="M16 21h5v-5" />
+                  </>
+                )}
+              </svg>
+              {isFullscreen ? "전체화면 종료" : "전체보기"}
+            </button>
+            <button
+              type="button"
+              onClick={closeZoomModal}
               className="absolute right-0 top-0 z-10 flex h-10 w-10 -translate-y-12 items-center justify-center rounded-full bg-white text-lg font-semibold text-stone-950 shadow-sm transition hover:bg-[#FF6B35] hover:text-white"
               aria-label="확대 이미지 닫기"
             >
@@ -344,7 +427,15 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
             </button>
 
             <div className="overflow-hidden rounded-lg bg-white shadow-2xl">
-              <ZoomableModalImage key={activeImage.src} image={activeImage} />
+              <ZoomableModalImage
+                image={activeImage}
+                isFullscreen={isFullscreen}
+                fullscreenRef={fullscreenImageRef}
+                hasMultipleImages={hasMultipleImages}
+                onPrevious={goPrevious}
+                onNext={goNext}
+                onExitFullscreen={() => document.exitFullscreen().catch(() => undefined)}
+              />
               <div className="flex items-center justify-between gap-3 border-t border-orange-100 px-4 py-3">
                 <div>
                   <p className="text-sm font-semibold text-stone-950">{activeImage.label}</p>
@@ -379,7 +470,23 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
   );
 }
 
-function ZoomableModalImage({ image }: { image: GuideImage }) {
+function ZoomableModalImage({
+  image,
+  isFullscreen,
+  fullscreenRef,
+  hasMultipleImages,
+  onPrevious,
+  onNext,
+  onExitFullscreen,
+}: {
+  image: GuideImage;
+  isFullscreen: boolean;
+  fullscreenRef: RefObject<HTMLDivElement | null>;
+  hasMultipleImages: boolean;
+  onPrevious: () => void;
+  onNext: () => void;
+  onExitFullscreen: () => void;
+}) {
   const [scale, setScale] = useState(minZoomScale);
   const [offset, setOffset] = useState({ x: 0, y: 0 });
   const [isPanning, setIsPanning] = useState(false);
@@ -387,6 +494,7 @@ function ZoomableModalImage({ image }: { image: GuideImage }) {
   const scaleRef = useRef(scale);
   const activePointers = useRef(new Map<number, { x: number; y: number }>());
   const panStart = useRef({ x: 0, y: 0 });
+  const swipeStart = useRef<{ x: number; y: number } | null>(null);
   const lastPinchDistance = useRef<number | null>(null);
 
   useEffect(() => {
@@ -415,6 +523,10 @@ function ZoomableModalImage({ image }: { image: GuideImage }) {
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
     event.stopPropagation();
     event.currentTarget.setPointerCapture(event.pointerId);
+    swipeStart.current = {
+      x: event.clientX,
+      y: event.clientY,
+    };
     activePointers.current.set(event.pointerId, {
       x: event.clientX,
       y: event.clientY,
@@ -468,11 +580,34 @@ function ZoomableModalImage({ image }: { image: GuideImage }) {
 
   function handlePointerEnd(event: PointerEvent<HTMLDivElement>) {
     event.stopPropagation();
+    const swipe = swipeStart.current;
     activePointers.current.delete(event.pointerId);
     lastPinchDistance.current =
       activePointers.current.size >= 2 ? getPointerDistance(activePointers.current) : null;
     setIsPanning(false);
     setIsPinching(activePointers.current.size >= 2);
+
+    if (
+      swipe &&
+      hasMultipleImages &&
+      scaleRef.current === minZoomScale &&
+      activePointers.current.size === 0
+    ) {
+      const distanceX = event.clientX - swipe.x;
+      const distanceY = event.clientY - swipe.y;
+
+      if (Math.abs(distanceX) > 64 && Math.abs(distanceX) > Math.abs(distanceY) * 1.2) {
+        if (distanceX > 0) {
+          onPrevious();
+        } else {
+          onNext();
+        }
+      }
+    }
+
+    if (activePointers.current.size === 0) {
+      swipeStart.current = null;
+    }
   }
 
   function handleDoubleClick(event: MouseEvent<HTMLDivElement>) {
@@ -489,7 +624,10 @@ function ZoomableModalImage({ image }: { image: GuideImage }) {
 
   return (
     <div
-      className={`flex max-h-[82vh] touch-none select-none items-center justify-center overflow-hidden bg-[#FAFAFA] ${
+      ref={fullscreenRef}
+      className={`relative flex touch-none select-none items-center justify-center overflow-hidden bg-[#FAFAFA] ${
+        isFullscreen ? "h-screen w-screen" : "max-h-[82vh]"
+      } ${
         scale > minZoomScale ? (isPanning ? "cursor-grabbing" : "cursor-grab") : "cursor-zoom-in"
       }`}
       onClick={(event) => event.stopPropagation()}
@@ -500,12 +638,55 @@ function ZoomableModalImage({ image }: { image: GuideImage }) {
       onPointerCancel={handlePointerEnd}
       onWheel={handleWheel}
     >
+      {isFullscreen ? (
+        <button
+          type="button"
+          onClick={(event) => {
+            event.stopPropagation();
+            onExitFullscreen();
+          }}
+          onPointerDown={(event) => event.stopPropagation()}
+          className="absolute right-4 top-4 z-20 rounded-full bg-black/45 px-4 py-2 text-sm font-semibold text-white backdrop-blur transition hover:bg-[#FF6B35]"
+        >
+          전체화면 종료
+        </button>
+      ) : null}
+
+      {isFullscreen && hasMultipleImages ? (
+        <>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onPrevious();
+            }}
+            onPointerDown={(event) => event.stopPropagation()}
+            aria-label="이전 이미지"
+            className="absolute left-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 text-2xl font-semibold text-white backdrop-blur transition hover:bg-[#FF6B35]/90"
+          >
+            {"<"}
+          </button>
+          <button
+            type="button"
+            onClick={(event) => {
+              event.stopPropagation();
+              onNext();
+            }}
+            onPointerDown={(event) => event.stopPropagation()}
+            aria-label="다음 이미지"
+            className="absolute right-4 top-1/2 z-20 flex h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-black/35 text-2xl font-semibold text-white backdrop-blur transition hover:bg-[#FF6B35]/90"
+          >
+            {">"}
+          </button>
+        </>
+      ) : null}
+
       <Image
         src={image.src}
         alt={image.alt}
         width={image.width}
         height={image.height}
-        className="max-h-[82vh] w-full object-contain"
+        className={`w-full object-contain ${isFullscreen ? "max-h-screen" : "max-h-[82vh]"}`}
         draggable={false}
         style={{
           transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${scale})`,

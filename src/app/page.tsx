@@ -13,10 +13,10 @@ export default function Home() {
         <div className="mx-auto flex min-h-screen w-full max-w-6xl flex-col justify-center gap-10 px-5 py-12 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8">
           <div className="max-w-2xl">
             <p className="text-sm font-medium text-[#0A7C6E]">WHYME Resource Library</p>
-            <h1 className="mt-4 text-3xl font-semibold leading-tight tracking-normal text-stone-950 sm:text-5xl">
+            <h1 className="balanced-korean mt-4 text-3xl font-semibold leading-tight tracking-normal text-stone-950 sm:text-5xl">
               가정에서 바로 실행할 수 있는 미디어 교육 자료집
             </h1>
-            <p className="mt-5 max-w-xl text-base leading-7 text-stone-600 sm:text-lg">
+            <p className="balanced-korean mt-5 max-w-xl text-base leading-7 text-stone-600 sm:text-lg">
               아이의 미디어 사용이 걱정될 때, 지금 필요한 자료를 고민별로 찾거나 전체 자료실에서 천천히 살펴보세요.
             </p>
 

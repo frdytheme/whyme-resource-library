@@ -21,10 +21,10 @@ export default function ResourcesPage() {
           <div className="flex items-start justify-between gap-5">
             <div className="mt-6 max-w-2xl">
               <p className="text-sm font-medium text-[#0A7C6E]">전체 자료 보기</p>
-              <h1 className="mt-2 text-3xl font-semibold leading-tight text-stone-950 sm:text-4xl">
+              <h1 className="balanced-korean mt-2 text-3xl font-semibold leading-tight text-stone-950 sm:text-4xl">
                 필요한 자료를 카테고리로 찾아보세요
               </h1>
-              <p className="mt-4 text-base leading-7 text-stone-600">
+              <p className="balanced-korean mt-4 text-base leading-7 text-stone-600">
                 플랫폼 안전 설정, 체크리스트·협약서, 건강한 미디어 문화 자료를 한곳에 모았습니다.
               </p>
             </div>

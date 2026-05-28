@@ -47,21 +47,11 @@ export function ConcernResourceExplorer({ concerns, resources }: ConcernResource
     });
   }, [concerns, normalizedQuery, resources]);
 
-  const searchedResources = useMemo(() => {
-    if (!normalizedQuery) {
-      return [];
-    }
-
-    return resources.filter((resource) =>
-      createResourceSearchText(resource).includes(normalizedQuery),
-    );
-  }, [normalizedQuery, resources]);
-
-  const recommendedResources = normalizedQuery
-    ? searchedResources
-    : activeConcern
-      ? resources.filter((resource) => resource.relatedConcerns.includes(activeConcern.id))
-      : resources.slice(0, 6);
+  const recommendedResources = activeConcern
+    ? sortRecommendedFirst(
+        resources.filter((resource) => resource.relatedConcerns.includes(activeConcern.id)),
+      )
+    : [];
 
   return (
     <div className="grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr]">
@@ -80,7 +70,7 @@ export function ConcernResourceExplorer({ concerns, resources }: ConcernResource
           />
           <p className="mt-2 text-sm leading-6 text-stone-500">
             {normalizedQuery
-              ? `${visibleConcerns.length}개의 관련 고민과 ${searchedResources.length}개의 자료를 찾았습니다.`
+              ? `${visibleConcerns.length}개의 관련 고민을 찾았습니다.`
               : "자주 찾는 대표 질문을 먼저 보여드립니다."}
           </p>
         </div>
@@ -111,38 +101,40 @@ export function ConcernResourceExplorer({ concerns, resources }: ConcernResource
 
         {visibleConcerns.length === 0 ? (
           <div className="rounded-lg border border-orange-100 bg-white p-5 text-sm leading-6 text-stone-600">
-            검색된 고민이 없습니다. 오른쪽 자료 검색 결과를 확인하거나 다른 표현으로 검색해보세요.
+            검색된 고민이 없습니다. 다른 표현으로 다시 검색해보세요.
           </div>
         ) : null}
       </section>
 
       <section>
         <div className="mb-4">
-          <p className="text-sm font-medium text-[#0A7C6E]">
-            {normalizedQuery ? "자료 검색 결과" : "추천 자료"}
-          </p>
+          <p className="text-sm font-medium text-[#0A7C6E]">추천 자료</p>
           <h2 className="mt-1 text-2xl font-semibold text-stone-950">
-            {normalizedQuery
-              ? `"${query.trim()}" 관련 자료`
-              : activeConcern?.title ?? "대표 질문에서 시작해보세요"}
+            {activeConcern?.title ?? "왼쪽에서 고민을 선택해보세요"}
           </h2>
           <p className="mt-2 text-sm leading-6 text-stone-600">
-            {normalizedQuery
-              ? "검색어와 관련된 자료를 바로 확인할 수 있습니다."
-              : activeConcern?.description ??
-                "왼쪽에서 고민을 선택하면 그 상황에 맞는 설정 가이드와 대화 자료를 보여드립니다."}
+            {activeConcern?.description ??
+              "현재 상황과 가장 가까운 고민을 고르면, 그 고민에 맞는 설정 가이드와 대화 자료를 보여드립니다."}
           </p>
         </div>
 
-        {recommendedResources.length > 0 ? (
+        {!activeConcern ? (
+          <div className="rounded-lg border border-dashed border-orange-200 bg-white p-6 text-sm leading-6 text-stone-600">
+            검색 결과에서 가까운 고민을 선택하거나, 대표 질문 중 하나를 골라보세요.
+          </div>
+        ) : recommendedResources.length > 0 ? (
           <div className="grid gap-4 sm:grid-cols-2">
             {recommendedResources.map((resource) => (
-              <ResourceCard key={resource.id} resource={resource} />
+              <ResourceCard
+                key={resource.id}
+                resource={resource}
+                href={`/resources/${resource.id}?from=concerns&concern=${activeConcern.id}`}
+              />
             ))}
           </div>
         ) : (
           <div className="rounded-lg border border-orange-100 bg-white p-5 text-sm leading-6 text-stone-600">
-            검색된 자료가 없습니다. 다른 표현으로 다시 검색해보세요.
+            이 고민에 연결된 자료가 아직 없습니다.
           </div>
         )}
       </section>
@@ -166,17 +158,16 @@ function createConcernSearchText(concern: Concern, relatedResources: Resource[])
     .toLowerCase();
 }
 
-function createResourceSearchText(resource: Resource) {
-  return [
-    resource.title,
-    resource.description,
-    ...resource.tags,
-    ...resource.keywords,
-  ]
-    .join(" ")
-    .toLowerCase();
-}
-
 function recommendedCount(resources: Resource[], concernId: ConcernId) {
   return resources.filter((resource) => resource.relatedConcerns.includes(concernId)).length;
+}
+
+function sortRecommendedFirst(resources: Resource[]) {
+  return [...resources].sort((a, b) => {
+    if (a.isRecommended === b.isRecommended) {
+      return 0;
+    }
+
+    return a.isRecommended ? -1 : 1;
+  });
 }

@@ -97,10 +97,12 @@ export default async function ResourceDetailPage({ params }: ResourceDetailPageP
               >
                 {categoryLabels[resource.category]}
               </span>
-              <h1 className="mt-4 text-3xl font-semibold leading-tight text-stone-950 sm:text-4xl">
+              <h1 className="balanced-korean mt-4 text-3xl font-semibold leading-tight text-stone-950 sm:text-4xl">
                 {resource.title}
               </h1>
-              <p className="mt-4 text-base leading-7 text-stone-600">{resource.description}</p>
+              <p className="balanced-korean mt-4 text-base leading-7 text-stone-600">
+                {resource.description}
+              </p>
             </div>
             <Suspense
               fallback={

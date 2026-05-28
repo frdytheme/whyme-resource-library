@@ -30,3 +30,9 @@ body {
 a {
   text-decoration: none;
 }
+
+.balanced-korean {
+  word-break: keep-all;
+  overflow-wrap: break-word;
+  text-wrap: balance;
+}

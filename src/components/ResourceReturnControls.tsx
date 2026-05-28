@@ -6,6 +6,16 @@ import { useSearchParams } from "next/navigation";
 function useReturnTarget() {
   const searchParams = useSearchParams();
   const isFromPackages = searchParams.get("from") === "packages";
+  const isFromConcerns = searchParams.get("from") === "concerns";
+  const concernId = searchParams.get("concern");
+  const concernHref = concernId ? `/concerns?concern=${concernId}` : "/concerns";
+
+  if (isFromConcerns) {
+    return {
+      href: concernHref,
+      label: "고민별 추천으로 돌아가기",
+    };
+  }
 
   return {
     href: isFromPackages ? "/packages" : "/resources",

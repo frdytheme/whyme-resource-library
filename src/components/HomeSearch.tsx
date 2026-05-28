@@ -69,12 +69,12 @@ export function HomeSearch({ concerns, resources }: HomeSearchProps) {
           {hasResults ? (
             <div className="grid gap-3">
               {concernResults.length > 0 ? (
-                <SearchGroup title="고민으로 찾기">
+                <SearchGroup title="고민으로 찾기" variant="concern">
                   {concernResults.map((concern) => (
                     <Link
                       key={concern.id}
                       href={`/concerns?concern=${concern.id}`}
-                      className="block rounded-md px-3 py-2 transition hover:bg-[#FF6B35]/10"
+                      className="block rounded-md px-3 py-2 transition hover:bg-white/70"
                     >
                       <span className="text-sm font-medium text-stone-950">{concern.title}</span>
                       <span className="mt-1 block text-xs leading-5 text-stone-500">
@@ -86,12 +86,12 @@ export function HomeSearch({ concerns, resources }: HomeSearchProps) {
               ) : null}
 
               {resourceResults.length > 0 ? (
-                <SearchGroup title="자료 바로가기">
+                <SearchGroup title="자료 바로가기" variant="resource">
                   {resourceResults.map((resource) => (
                     <Link
                       key={resource.id}
                       href={`/resources/${resource.id}`}
-                      className="block rounded-md px-3 py-2 transition hover:bg-[#FF6B35]/10"
+                      className="block rounded-md px-3 py-2 transition hover:bg-white/70"
                     >
                       <span className="text-sm font-medium text-stone-950">{resource.title}</span>
                       <span className="mt-1 block text-xs leading-5 text-stone-500">
@@ -115,14 +115,27 @@ export function HomeSearch({ concerns, resources }: HomeSearchProps) {
 
 function SearchGroup({
   title,
+  variant,
   children,
 }: {
   title: string;
+  variant: "concern" | "resource";
   children: React.ReactNode;
 }) {
+  const styles = {
+    concern: {
+      wrapper: "border-[#0A7C6E]/15 bg-[#F0FAF8]",
+      title: "text-[#0A7C6E]",
+    },
+    resource: {
+      wrapper: "border-[#FF6B35]/15 bg-[#FFF4EE]",
+      title: "text-[#FF6B35]",
+    },
+  }[variant];
+
   return (
-    <div>
-      <p className="px-3 pb-1 text-xs font-semibold text-[#0A7C6E]">{title}</p>
+    <div className={`rounded-lg border p-2 ${styles.wrapper}`}>
+      <p className={`px-2 pb-1 text-xs font-semibold ${styles.title}`}>{title}</p>
       <div className="grid gap-1">{children}</div>
     </div>
   );

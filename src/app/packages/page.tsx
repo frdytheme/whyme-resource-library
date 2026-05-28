@@ -21,10 +21,10 @@ export default function PackagesPage() {
           <div className="flex items-start justify-between gap-5">
             <div className="mt-6 max-w-2xl">
               <p className="text-sm font-medium text-[#0A7C6E]">상황별 추천 설정 모음</p>
-              <h1 className="mt-2 text-3xl font-semibold leading-tight text-stone-950 sm:text-4xl">
+              <h1 className="balanced-korean mt-2 text-3xl font-semibold leading-tight text-stone-950 sm:text-4xl">
                 지금 꼭 필요한 설정을 확인하세요
               </h1>
-              <p className="mt-4 text-base leading-7 text-stone-600">
+              <p className="balanced-korean mt-4 text-base leading-7 text-stone-600">
                 일상에서 자주 마주할 수 있는 상황별로 필요한 가이드 자료를 묶어서 안내해 드릴게요.
               </p>
             </div>

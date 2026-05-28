@@ -24,15 +24,19 @@ export function PackageCollection({ packages, resources }: PackageCollectionProp
         return (
           <section
             key={resourcePackage.id}
-            className={`overflow-hidden rounded-lg border bg-white shadow-sm transition duration-200 ${
-              isOpen ? "border-[#FF6B35]/45" : "border-orange-100 hover:border-[#FF6B35]/35"
+            className={`overflow-hidden rounded-lg border shadow-sm transition duration-200 ${
+              isOpen
+                ? "border-[#FF6B35]/45 bg-[#FFF4EE] ring-1 ring-[#FF6B35]/10"
+                : "border-orange-100 bg-white hover:border-[#FF6B35]/35"
             }`}
           >
             <button
               type="button"
               onClick={() => setOpenPackageId(isOpen ? "" : resourcePackage.id)}
               aria-expanded={isOpen}
-              className="flex w-full items-start justify-between gap-4 p-5 text-left transition hover:bg-[#FFF4EE]/50"
+              className={`flex w-full items-start justify-between gap-4 p-5 text-left transition ${
+                isOpen ? "bg-[#FFF4EE]" : "hover:bg-[#FFF4EE]/50"
+              }`}
             >
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2">
@@ -49,8 +53,10 @@ export function PackageCollection({ packages, resources }: PackageCollectionProp
                 </p>
               </div>
               <span
-                className={`mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-orange-100 bg-[#FAFAFA] text-lg font-semibold text-stone-700 transition ${
-                  isOpen ? "rotate-45 border-[#FF6B35]/35 text-[#FF6B35]" : ""
+                className={`mt-1 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border text-lg font-semibold transition ${
+                  isOpen
+                    ? "rotate-45 border-[#FF6B35]/35 bg-white text-[#FF6B35]"
+                    : "border-orange-100 bg-[#FAFAFA] text-stone-700"
                 }`}
                 aria-hidden="true"
               >
