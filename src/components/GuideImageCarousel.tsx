@@ -30,10 +30,9 @@ const maxZoomScale = 4;
 export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
   const imageCount = images.length;
   const hasMultipleImages = imageCount > 1;
-  const [slideIndex, setSlideIndex] = useState(hasMultipleImages ? 1 : 0);
+  const [activeIndex, setActiveIndex] = useState(0);
   const [dragOffset, setDragOffset] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
-  const [isJumping, setIsJumping] = useState(false);
   const [isAnimating, setIsAnimating] = useState(false);
   const [isZoomOpen, setIsZoomOpen] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -41,7 +40,7 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
   const navigationLocked = useRef(false);
   const fullscreenImageRef = useRef<HTMLDivElement | null>(null);
 
-  const canNavigate = !isAnimating && !isDragging && !isJumping;
+  const canNavigate = !isAnimating && !isDragging;
 
   function lockNavigation() {
     navigationLocked.current = true;
@@ -58,20 +57,20 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
       return;
     }
 
-    setIsJumping(false);
     lockNavigation();
-    setSlideIndex((current) => current - 1);
-  }, [canNavigate]);
+    setActiveIndex((current) => (current - 1 + imageCount) % imageCount);
+    window.setTimeout(unlockNavigation, 180);
+  }, [canNavigate, imageCount]);
 
   const goNext = useCallback(() => {
     if (!canNavigate || navigationLocked.current) {
       return;
     }
 
-    setIsJumping(false);
     lockNavigation();
-    setSlideIndex((current) => current + 1);
-  }, [canNavigate]);
+    setActiveIndex((current) => (current + 1) % imageCount);
+    window.setTimeout(unlockNavigation, 180);
+  }, [canNavigate, imageCount]);
 
   const goTo = useCallback(
     (index: number) => {
@@ -79,29 +78,12 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
         return;
       }
 
-      setIsJumping(false);
       lockNavigation();
-      setSlideIndex(hasMultipleImages ? index + 1 : index);
+      setActiveIndex(index);
+      window.setTimeout(unlockNavigation, 180);
     },
-    [canNavigate, hasMultipleImages],
+    [canNavigate],
   );
-
-  useEffect(() => {
-    if (!isJumping) {
-      return;
-    }
-
-    const frame = requestAnimationFrame(() => {
-      const nextFrame = requestAnimationFrame(() => {
-        setIsJumping(false);
-        navigationLocked.current = false;
-      });
-
-      return () => cancelAnimationFrame(nextFrame);
-    });
-
-    return () => cancelAnimationFrame(frame);
-  }, [isJumping]);
 
   useEffect(() => {
     if (!isZoomOpen) {
@@ -157,37 +139,7 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
     return null;
   }
 
-  const slides = hasMultipleImages
-    ? [images[imageCount - 1], ...images, images[0]]
-    : images;
-  const activeIndex = getActiveIndex(slideIndex, imageCount, hasMultipleImages);
   const activeImage = images[activeIndex];
-  const trackOffset = `calc(${-slideIndex * 100}% + ${dragOffset}px)`;
-
-  function handleTransitionEnd() {
-    if (!hasMultipleImages) {
-      unlockNavigation();
-      return;
-    }
-
-    if (slideIndex === 0) {
-      navigationLocked.current = true;
-      setIsAnimating(false);
-      setIsJumping(true);
-      setSlideIndex(imageCount);
-      return;
-    }
-
-    if (slideIndex === imageCount + 1) {
-      navigationLocked.current = true;
-      setIsAnimating(false);
-      setIsJumping(true);
-      setSlideIndex(1);
-      return;
-    }
-
-    unlockNavigation();
-  }
 
   function handleKeyDown(event: KeyboardEvent<HTMLElement>) {
     if (!hasMultipleImages) {
@@ -206,14 +158,15 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
   }
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
-    if (navigationLocked.current || isAnimating || isJumping) {
+    if (navigationLocked.current || isAnimating) {
       return;
     }
 
     pointerStartX.current = event.clientX;
     setIsDragging(true);
-    setIsJumping(false);
-    event.currentTarget.setPointerCapture(event.pointerId);
+    if (event.currentTarget.setPointerCapture) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
   }
 
   function handlePointerMove(event: PointerEvent<HTMLDivElement>) {
@@ -247,10 +200,11 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
 
     lockNavigation();
     if (distance > 0) {
-      setSlideIndex((current) => current - 1);
+      setActiveIndex((current) => (current - 1 + imageCount) % imageCount);
     } else {
-      setSlideIndex((current) => current + 1);
+      setActiveIndex((current) => (current + 1) % imageCount);
     }
+    window.setTimeout(unlockNavigation, 180);
   }
 
   function closeZoomModal() {
@@ -294,32 +248,25 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
           }}
         >
           <div
-            className={`flex ${
-              isDragging || isJumping ? "" : "transition-transform duration-300 ease-out"
+            className={`relative w-full cursor-zoom-in bg-[#FAFAFA] text-left ${
+              isDragging ? "" : "transition-transform duration-150 ease-out"
             }`}
-            style={{ transform: `translateX(${trackOffset})` }}
-            onTransitionEnd={handleTransitionEnd}
+            style={{ transform: `translate3d(${dragOffset}px, 0, 0)` }}
+            role="button"
+            aria-label={`${activeImage.label} 크게 보기`}
           >
-            {slides.map((image, index) => (
-              <div
-                key={`${image.src}-${index}`}
-                className="relative w-full shrink-0 cursor-zoom-in bg-[#FAFAFA] text-left"
-                role="button"
-                aria-label={`${image.label} 크게 보기`}
-              >
-                {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img
-                  src={image.src}
-                  alt={image.alt}
-                  width={image.width}
-                  height={image.height}
-                  className="h-auto w-full"
-                  loading={index === slideIndex || !hasMultipleImages ? "eager" : "lazy"}
-                  decoding="async"
-                  draggable={false}
-                />
-              </div>
-            ))}
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              key={activeImage.src}
+              src={activeImage.src}
+              alt={activeImage.alt}
+              width={activeImage.width}
+              height={activeImage.height}
+              className="h-auto w-full"
+              loading="eager"
+              decoding="async"
+              draggable={false}
+            />
           </div>
 
           {hasMultipleImages ? (
@@ -523,7 +470,9 @@ function ZoomableModalImage({
 
   function handlePointerDown(event: PointerEvent<HTMLDivElement>) {
     event.stopPropagation();
-    event.currentTarget.setPointerCapture(event.pointerId);
+    if (event.currentTarget.setPointerCapture) {
+      event.currentTarget.setPointerCapture(event.pointerId);
+    }
     swipeStart.current = {
       x: event.clientX,
       y: event.clientY,
@@ -713,24 +662,4 @@ function getPointerDistance(pointers: Map<number, { x: number; y: number }>) {
   }
 
   return Math.hypot(firstPointer.x - secondPointer.x, firstPointer.y - secondPointer.y);
-}
-
-function getActiveIndex(
-  slideIndex: number,
-  imageCount: number,
-  hasMultipleImages: boolean,
-) {
-  if (!hasMultipleImages) {
-    return slideIndex;
-  }
-
-  if (slideIndex === 0) {
-    return imageCount - 1;
-  }
-
-  if (slideIndex === imageCount + 1) {
-    return 0;
-  }
-
-  return slideIndex - 1;
 }
