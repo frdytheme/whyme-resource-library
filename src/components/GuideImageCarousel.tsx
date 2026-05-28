@@ -316,6 +316,7 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
                   className="h-auto w-full"
                   priority={index === 1 || !hasMultipleImages}
                   draggable={false}
+                  unoptimized
                 />
               </div>
             ))}
@@ -688,6 +689,7 @@ function ZoomableModalImage({
         height={image.height}
         className={`w-full object-contain ${isFullscreen ? "max-h-screen" : "max-h-[82vh]"}`}
         draggable={false}
+        unoptimized
         style={{
           transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${scale})`,
           transition: isPanning || isPinching ? "none" : "transform 160ms ease-out",
