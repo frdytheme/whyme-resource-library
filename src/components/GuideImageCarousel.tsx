@@ -314,9 +314,9 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
                   width={image.width}
                   height={image.height}
                   className="h-auto w-full"
-                  priority={index === 1 || !hasMultipleImages}
+                  priority={index === slideIndex || !hasMultipleImages}
+                  sizes="(min-width: 1024px) 760px, calc(100vw - 40px)"
                   draggable={false}
-                  unoptimized
                 />
               </div>
             ))}
@@ -688,8 +688,8 @@ function ZoomableModalImage({
         width={image.width}
         height={image.height}
         className={`w-full object-contain ${isFullscreen ? "max-h-screen" : "max-h-[82vh]"}`}
+        sizes="100vw"
         draggable={false}
-        unoptimized
         style={{
           transform: `translate3d(${offset.x}px, ${offset.y}px, 0) scale(${scale})`,
           transition: isPanning || isPinching ? "none" : "transform 160ms ease-out",

@@ -17,23 +17,24 @@ export default function Home() {
               가정에서 바로 실행할 수 있는 미디어 교육 자료집
             </h1>
             <p className="balanced-korean mt-5 max-w-xl text-base leading-7 text-stone-600 sm:text-lg">
-              아이의 미디어 사용이 걱정될 때, 지금 필요한 자료를 고민별로 찾거나 전체 자료실에서 천천히 살펴보세요.
+              우리 아이의 미디어 사용이 걱정될 때, 지금 필요한 자료를 고민별로 찾거나 전체
+              자료실에서 천천히 살펴보세요.
             </p>
 
             <HomeSearch concerns={concerns} resources={visibleResources} />
 
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
               <Link
+                href="/packages"
+                className="rounded-lg border border-[#0A7C6E]/30 bg-white px-5 py-4 text-sm font-semibold text-[#0A7C6E] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#0A7C6E] hover:bg-[#F0FAF8] hover:shadow-md"
+              >
+                우리 아이 상황별 추천 설정
+              </Link>
+              <Link
                 href="/concerns"
                 className="rounded-lg border border-[#FF6B35] bg-[#FF6B35] px-5 py-4 text-sm font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[#E85B2B] hover:shadow-md"
               >
                 무엇이 필요하신가요?
-              </Link>
-              <Link
-                href="/packages"
-                className="rounded-lg border border-[#0A7C6E]/30 bg-white px-5 py-4 text-sm font-semibold text-[#0A7C6E] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#0A7C6E] hover:bg-[#F0FAF8] hover:shadow-md"
-              >
-                상황별 추천 설정 모음
               </Link>
               <Link
                 href="/resources"
