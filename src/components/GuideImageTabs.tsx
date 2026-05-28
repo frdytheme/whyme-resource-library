@@ -6,10 +6,13 @@ import { VideoGuide } from "@/types/resource";
 
 type GuideImage = {
   src: string;
+  displaySrc?: string;
   alt: string;
   label: string;
   width: number;
   height: number;
+  displayWidth?: number;
+  displayHeight?: number;
 };
 
 export type GuideImageGroup = {

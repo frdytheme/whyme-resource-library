@@ -14,10 +14,13 @@ import {
 
 type GuideImage = {
   src: string;
+  displaySrc?: string;
   alt: string;
   label: string;
   width: number;
   height: number;
+  displayWidth?: number;
+  displayHeight?: number;
 };
 
 type GuideImageCarouselProps = {
@@ -258,10 +261,10 @@ export function GuideImageCarousel({ images }: GuideImageCarouselProps) {
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               key={activeImage.src}
-              src={activeImage.src}
+              src={activeImage.displaySrc ?? activeImage.src}
               alt={activeImage.alt}
-              width={activeImage.width}
-              height={activeImage.height}
+              width={activeImage.displayWidth ?? activeImage.width}
+              height={activeImage.displayHeight ?? activeImage.height}
               className="h-auto w-full"
               loading="eager"
               decoding="async"
@@ -633,10 +636,10 @@ function ZoomableModalImage({
 
       {/* eslint-disable-next-line @next/next/no-img-element */}
       <img
-        src={image.src}
+        src={image.displaySrc ?? image.src}
         alt={image.alt}
-        width={image.width}
-        height={image.height}
+        width={image.displayWidth ?? image.width}
+        height={image.displayHeight ?? image.height}
         className={`w-full object-contain ${isFullscreen ? "max-h-screen" : "max-h-[82vh]"}`}
         loading="eager"
         decoding="async"

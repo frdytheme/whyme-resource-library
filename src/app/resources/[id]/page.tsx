@@ -20,10 +20,13 @@ type ResourceDetailPageProps = {
 
 type GuideImage = {
   src: string;
+  displaySrc?: string;
   alt: string;
   label: string;
   width: number;
   height: number;
+  displayWidth?: number;
+  displayHeight?: number;
 };
 
 const categoryLabels: Record<Resource["category"], string> = {
@@ -270,14 +273,31 @@ function getGuideImages(
       const stepMatch = file.match(/^step-(\d+)\.webp$/);
       const stepNumber = stepMatch ? Number(stepMatch[1]) : null;
       const prefix = `/images/guides/${directory}`;
+      const displayFile = file.replace(/\.webp$/, ".jpg");
+      const displayPath = path.join(
+        process.cwd(),
+        "public",
+        "images",
+        "guide-display",
+        directory,
+        displayFile,
+      );
+      const originalSize = getWebpSize(path.join(dir, file));
+      const displaySize = getDisplaySize(originalSize.width, originalSize.height);
 
       return {
         src: `${prefix}/${file}`,
+        displaySrc: fs.existsSync(displayPath)
+          ? `/images/guide-display/${directory}/${displayFile}`
+          : undefined,
         alt: isCover
           ? `${resource.title} 대표 이미지`
           : `${resource.title} ${guideGroupLabels[groupId] ?? ""} 단계 ${stepNumber ?? ""}`,
         label: isCover ? "대표 이미지" : `단계 ${stepNumber}`,
-        ...getWebpSize(path.join(dir, file)),
+        width: originalSize.width,
+        height: originalSize.height,
+        displayWidth: displaySize.width,
+        displayHeight: displaySize.height,
       };
     });
 }
@@ -316,4 +336,13 @@ function getWebpSize(filePath: string) {
   }
 
   return { width: 1600, height: 1000 };
+}
+
+function getDisplaySize(width: number, height: number) {
+  const ratio = Math.min(960 / width, 1400 / height, 1);
+
+  return {
+    width: Math.round(width * ratio),
+    height: Math.round(height * ratio),
+  };
 }
