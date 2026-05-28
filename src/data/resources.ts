@@ -150,7 +150,7 @@ export const resources: Resource[] = [
     difficulty: "easy",
     estimatedTime: "3분",
     recommendedAge: ["초등 저학년", "초등 고학년", "중학생"],
-    videoGuides: [{ title: "영상 가이드", url: "" }],
+    videoGuides: [{ title: "영상 가이드", url: "https://youtu.be/3kOpRjJ0KqY" }],
     image: "/images/guides/youtube-restricted-mode.webp",
   },
   {
@@ -201,7 +201,7 @@ export const resources: Resource[] = [
     difficulty: "easy",
     estimatedTime: "5분",
     recommendedAge: ["중학생", "고등학생"],
-    videoGuides: [{ title: "영상 가이드", url: "" }],
+    videoGuides: [{ title: "영상 가이드", url: "https://youtu.be/BRjv4Kjwxcw" }],
     image: "/images/guides/instagram-comment-filter.webp",
   },
   {
