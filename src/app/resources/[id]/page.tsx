@@ -16,6 +16,10 @@ type ResourceDetailPageProps = {
   params: Promise<{
     id: string;
   }>;
+  searchParams?: Promise<{
+    guide?: string;
+    image?: string;
+  }>;
 };
 
 type GuideImage = {
@@ -69,8 +73,9 @@ export async function generateMetadata({ params }: ResourceDetailPageProps): Pro
   };
 }
 
-export default async function ResourceDetailPage({ params }: ResourceDetailPageProps) {
+export default async function ResourceDetailPage({ params, searchParams }: ResourceDetailPageProps) {
   const { id } = await params;
+  const resolvedSearchParams = await searchParams;
   const resource = visibleResources.find((item) => item.id === id);
 
   if (!resource) {
@@ -138,7 +143,12 @@ export default async function ResourceDetailPage({ params }: ResourceDetailPageP
 
       <section className="mx-auto grid w-full max-w-6xl gap-5 px-5 pb-16 pt-8 sm:px-6 sm:pb-20 lg:grid-cols-[minmax(0,760px)_320px] lg:items-start lg:justify-center lg:px-8">
         <div className="min-w-0">
-          <GuideImageTabs groups={guideImageGroups} videoGuides={resource.videoGuides} />
+          <GuideImageTabs
+            groups={guideImageGroups}
+            videoGuides={resource.videoGuides}
+            initialTabId={resolvedSearchParams?.guide}
+            initialImageIndex={Number(resolvedSearchParams?.image ?? 0)}
+          />
         </div>
 
         <aside className="rounded-lg border border-orange-100 bg-white p-5 shadow-sm lg:sticky lg:top-6 lg:mt-[52px]">

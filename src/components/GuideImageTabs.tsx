@@ -24,6 +24,8 @@ export type GuideImageGroup = {
 type GuideImageTabsProps = {
   groups: GuideImageGroup[];
   videoGuides?: VideoGuide[];
+  initialTabId?: string;
+  initialImageIndex?: number;
 };
 
 type GuideTab =
@@ -40,7 +42,12 @@ type GuideTab =
       video: VideoGuide;
     };
 
-export function GuideImageTabs({ groups, videoGuides = [] }: GuideImageTabsProps) {
+export function GuideImageTabs({
+  groups,
+  videoGuides = [],
+  initialTabId,
+  initialImageIndex = 0,
+}: GuideImageTabsProps) {
   const visibleGroups = groups.filter((group) => group.images.length > 0);
   const visibleVideos = videoGuides
     .map((video) => ({
@@ -64,7 +71,10 @@ export function GuideImageTabs({ groups, videoGuides = [] }: GuideImageTabsProps
       group,
     })),
   ];
-  const [activeTabId, setActiveTabId] = useState(tabs[0]?.id ?? "");
+  const initialActiveTabId = tabs.some((tab) => tab.id === initialTabId)
+    ? initialTabId
+    : tabs[0]?.id;
+  const [activeTabId, setActiveTabId] = useState(initialActiveTabId ?? "");
 
   if (tabs.length === 0) {
     return null;
@@ -72,9 +82,21 @@ export function GuideImageTabs({ groups, videoGuides = [] }: GuideImageTabsProps
 
   const activeTab = tabs.find((tab) => tab.id === activeTabId) ?? tabs[0];
 
+  function activateTab(tabId: string) {
+    setActiveTabId(tabId);
+  }
+
+  function getTabHref(tabId: string) {
+    return `?guide=${encodeURIComponent(tabId)}`;
+  }
+
   if (tabs.length === 1) {
     return activeTab.type === "image" ? (
-      <GuideImageCarousel images={activeTab.group.images} />
+      <GuideImageCarousel
+        images={activeTab.group.images}
+        guideId={activeTab.id}
+        initialIndex={initialImageIndex}
+      />
     ) : (
       <VideoGuidePanel video={activeTab.video} />
     );
@@ -82,29 +104,48 @@ export function GuideImageTabs({ groups, videoGuides = [] }: GuideImageTabsProps
 
   return (
     <section className="mb-0">
-      <div className="mb-3 flex flex-wrap gap-2">
+      <div className="mb-3 flex flex-wrap gap-2" role="tablist" aria-label="가이드 보기 방식">
         {tabs.map((tab) => {
           const isActive = tab.id === activeTab.id;
 
           return (
-            <button
+            <a
               key={tab.id}
-              type="button"
-              onClick={() => setActiveTabId(tab.id)}
-              className={`rounded-lg border px-3 py-2 text-sm font-semibold transition ${
+              href={getTabHref(tab.id)}
+              role="tab"
+              aria-selected={isActive}
+              onClick={(event) => {
+                event.preventDefault();
+                activateTab(tab.id);
+                window.history.replaceState(null, "", getTabHref(tab.id));
+              }}
+              onTouchStart={() => {
+                activateTab(tab.id);
+              }}
+              onPointerDown={(event) => {
+                if (event.pointerType === "touch") {
+                  activateTab(tab.id);
+                }
+              }}
+              className={`touch-manipulation rounded-lg border px-3 py-2 text-sm font-semibold transition ${
                 isActive
                   ? "border-[#FF6B35] bg-[#FF6B35] text-white shadow-sm"
                   : "border-orange-100 bg-white text-stone-700 hover:border-[#FF6B35]"
               }`}
             >
               {tab.label}
-            </button>
+            </a>
           );
         })}
       </div>
 
       {activeTab.type === "image" ? (
-        <GuideImageCarousel key={activeTab.id} images={activeTab.group.images} />
+        <GuideImageCarousel
+          key={activeTab.id}
+          images={activeTab.group.images}
+          guideId={activeTab.id}
+          initialIndex={initialImageIndex}
+        />
       ) : (
         <VideoGuidePanel video={activeTab.video} />
       )}
