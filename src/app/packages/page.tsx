@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { Suspense } from "react";
 import { BackButton } from "@/components/BackButton";
 import { PackageCollection } from "@/components/PackageCollection";
 import { packages } from "@/data/packages";
@@ -34,7 +35,9 @@ export default function PackagesPage() {
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-5 py-10 sm:px-6 lg:px-8">
-        <PackageCollection packages={packages} resources={visibleResources} />
+        <Suspense fallback={null}>
+          <PackageCollection packages={packages} resources={visibleResources} />
+        </Suspense>
       </section>
     </main>
   );

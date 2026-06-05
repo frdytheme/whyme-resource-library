@@ -9,16 +9,19 @@ import {
   ResourceReturnIconButton,
   ResourceReturnTextLink,
 } from "@/components/ResourceReturnControls";
+import { packages } from "@/data/packages";
 import { visibleResources } from "@/data/visibleResources";
-import { Resource } from "@/types/resource";
+import { Resource, ResourcePackage } from "@/types/resource";
 
 type ResourceDetailPageProps = {
   params: Promise<{
     id: string;
   }>;
   searchParams?: Promise<{
+    from?: string;
     guide?: string;
     image?: string;
+    package?: string;
   }>;
 };
 
@@ -84,6 +87,8 @@ export default async function ResourceDetailPage({ params, searchParams }: Resou
 
   const guideImageGroups = getGuideImageGroups(resource);
   const downloadUrl = getAvailableDownloadUrl(resource);
+  const activePackage = getActivePackage(resolvedSearchParams?.package, resource.id);
+  const activePackageResources = activePackage ? getPackageResources(activePackage) : [];
 
   return (
     <main className="min-h-screen bg-[#FAFAFA] text-stone-950">
@@ -149,6 +154,31 @@ export default async function ResourceDetailPage({ params, searchParams }: Resou
             initialTabId={resolvedSearchParams?.guide}
             initialImageIndex={Number(resolvedSearchParams?.image ?? 0)}
           />
+
+          {resource.contentSections && resource.contentSections.length > 0 ? (
+            <article className="mt-5 rounded-lg border border-orange-100 bg-white p-5 shadow-sm sm:p-6">
+              <div className="grid gap-6">
+                {resource.contentSections.map((section, index) => (
+                  <section
+                    key={section.title}
+                    className={index === 0 ? "" : "border-t border-stone-200/70 pt-6"}
+                  >
+                    <h2 className="text-lg font-semibold text-stone-950">{section.title}</h2>
+                    <div className="mt-3 grid gap-3">
+                      {section.body.map((paragraph) => (
+                        <p
+                          key={paragraph}
+                          className="balanced-korean text-sm leading-7 text-stone-600 sm:text-base"
+                        >
+                          {renderStrongText(paragraph)}
+                        </p>
+                      ))}
+                    </div>
+                  </section>
+                ))}
+              </div>
+            </article>
+          ) : null}
         </div>
 
         <aside className="rounded-lg border border-orange-100 bg-white p-5 shadow-sm lg:sticky lg:top-6 lg:mt-[52px]">
@@ -184,14 +214,72 @@ export default async function ResourceDetailPage({ params, searchParams }: Resou
             </div>
           </div>
 
-          <div className="mt-5 border-t border-orange-100 pt-5">
-            <h2 className="text-sm font-semibold text-stone-950">검색 키워드</h2>
-            <p className="mt-2 text-sm leading-6 text-stone-600">{resource.keywords.join(", ")}</p>
-          </div>
+          {activePackage ? (
+            <div className="mt-5 border-t border-orange-100 pt-5">
+              <p className="text-xs font-medium text-[#0A7C6E]">상황별 추천 모음</p>
+              <h2 className="mt-1 text-sm font-semibold leading-6 text-stone-950">
+                {activePackage.title}
+              </h2>
+              <div className="mt-3 grid gap-2">
+                {activePackageResources.map((packageResource, index) => {
+                  const isCurrent = packageResource.id === resource.id;
+
+                  return (
+                    <Link
+                      key={packageResource.id}
+                      href={`/resources/${packageResource.id}?from=packages&package=${activePackage.id}`}
+                      aria-current={isCurrent ? "page" : undefined}
+                      className={`flex items-start gap-2 rounded-lg border px-3 py-2 text-sm transition ${
+                        isCurrent
+                          ? "border-[#FF6B35]/35 bg-[#FFF4EE] text-[#B84219]"
+                          : "border-orange-100 bg-white text-stone-700 hover:border-[#FF6B35]/35 hover:bg-[#FFF4EE]"
+                      }`}
+                    >
+                      <span
+                        className={`mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-md text-xs font-semibold ${
+                          isCurrent ? "bg-[#FF6B35] text-white" : "bg-[#FAFAFA] text-stone-500"
+                        }`}
+                      >
+                        {index + 1}
+                      </span>
+                      <span className="leading-5">{packageResource.title}</span>
+                    </Link>
+                  );
+                })}
+              </div>
+              <Link
+                href={`/packages?package=${activePackage.id}`}
+                className="mt-3 inline-flex text-sm font-semibold text-[#0A7C6E] hover:text-[#075F54]"
+              >
+                이 추천 모음으로 돌아가기
+              </Link>
+            </div>
+          ) : null}
+
         </aside>
       </section>
     </main>
   );
+}
+
+function getActivePackage(packageId: string | undefined, resourceId: string) {
+  if (!packageId) {
+    return null;
+  }
+
+  const activePackage = packages.find((resourcePackage) => resourcePackage.id === packageId);
+
+  if (!activePackage || !activePackage.resourceIds.includes(resourceId)) {
+    return null;
+  }
+
+  return activePackage;
+}
+
+function getPackageResources(resourcePackage: ResourcePackage) {
+  return resourcePackage.resourceIds
+    .map((resourceId) => visibleResources.find((item) => item.id === resourceId))
+    .filter((item): item is Resource => Boolean(item));
 }
 
 function getAvailableDownloadUrl(resource: Resource) {
@@ -206,6 +294,20 @@ function getAvailableDownloadUrl(resource: Resource) {
   );
 
   return fs.existsSync(downloadPath) ? resource.downloadUrl : null;
+}
+
+function renderStrongText(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, index) => {
+    if (part.startsWith("**") && part.endsWith("**")) {
+      return (
+        <strong key={`${part}-${index}`} className="font-semibold text-stone-950">
+          {part.slice(2, -2)}
+        </strong>
+      );
+    }
+
+    return part;
+  });
 }
 
 function getGuideImageGroups(resource: Resource): GuideImageGroup[] {

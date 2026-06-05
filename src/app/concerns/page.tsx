@@ -7,8 +7,8 @@ import { concerns } from "@/data/concerns";
 import { visibleResources } from "@/data/visibleResources";
 
 export const metadata: Metadata = {
-  title: "고민별 자료 찾기",
-  description: "학부모의 고민을 검색하고 WHYME 미디어 교육 자료를 추천받는 페이지입니다.",
+  title: "고민별 자료 고르기",
+  description: "상황에 가까운 고민을 고르고 WHYME 미디어 교육 자료를 추천받는 페이지입니다.",
 };
 
 export default function ConcernsPage() {
@@ -23,10 +23,10 @@ export default function ConcernsPage() {
             <div className="mt-6 max-w-2xl">
               <p className="text-sm font-medium text-[#0A7C6E]">무엇이 필요하신가요?</p>
               <h1 className="balanced-korean mt-2 text-3xl font-semibold leading-tight text-stone-950 sm:text-4xl">
-                대표 질문에서 고르거나 검색해보세요
+                지금 상황과 가까운 고민을 골라보세요
               </h1>
               <p className="balanced-korean mt-4 text-base leading-7 text-stone-600">
-                미디어 관련 고민을 검색하시면 교육 자료를 추천해 드릴게요.
+                미디어와 관련된 상황을 둘러보고, 필요한 교육 자료를 추천받아보세요.
               </p>
             </div>
             <BackButton />

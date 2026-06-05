@@ -83,4 +83,98 @@ export const packages: ResourcePackage[] = [
       "gaslighting-checklist"
     ],
   },
+  {
+    id: "online-spending-risk",
+    title: "온라인 결제와 현질이 걱정될 때",
+    description:
+      "게임 결제, 충동 구매, 도박성 요소가 걱정될 때 가족이 먼저 확인하고 약속할 자료를 모았습니다.",
+    keywords: ["현질", "온라인 결제", "게임 결제", "충동 결제", "도박", "가족 약속"],
+    resourceIds: [
+      "game-minimum-checklist",
+      "online-spending-rule-contract",
+      "gambling-warning-checklist",
+    ],
+  },
+  {
+    id: "stranger-dm-safety",
+    title: "낯선 사람 연락이나 DM이 걱정될 때",
+    description:
+      "카카오톡, 인스타그램, 디스코드에서 낯선 사람과 연결되는 접점을 줄이고 위험 신호를 살펴보는 자료입니다.",
+    keywords: ["DM", "낯선 사람", "카카오톡", "인스타그램", "디스코드", "그루밍"],
+    resourceIds: [
+      "kakao-talk-siren",
+      "kakao-phone-number-friend-block",
+      "discord-dm-filtering",
+      "instagram-private-account",
+      "grooming-checklist",
+    ],
+  },
+  {
+    id: "harmful-content-ad-safety",
+    title: "유해 콘텐츠와 광고 노출을 줄이고 싶을 때",
+    description:
+      "영상, 이미지, 광고가 과하게 노출되지 않도록 플랫폼 설정과 콘텐츠 판단 기준을 함께 확인합니다.",
+    keywords: ["유해 콘텐츠", "광고", "제한모드", "디스코드", "브라우저", "미디어 기준"],
+    resourceIds: [
+      "youtube-restricted-mode",
+      "youtube-feedback-controls",
+      "discord-sensitive-content-filter",
+      "browser-ad-blocker-install",
+      "media-yellow-list",
+    ],
+  },
+  {
+    id: "school-violence-response",
+    title: "학교폭력과 사이버폭력 대응이 필요할 때",
+    description:
+      "단톡방 괴롭힘, 사이버폭력, 피해 호소가 있을 때 기록 보관과 대처 순서를 차분히 확인하는 자료입니다.",
+    keywords: ["학교폭력", "사이버폭력", "단톡방", "괴롭힘", "증거", "대처"],
+    resourceIds: [
+      "school-violence-checklist",
+      "school-violence-victim-guide",
+      "kakao-chat-capture-export",
+      "kakao-groupchat-safety-settings",
+      "kakao-quiet-chatroom-setting",
+    ],
+  },
+  {
+    id: "family-media-rule-start",
+    title: "가족 미디어 규칙을 처음 만들 때",
+    description:
+      "시간 제한보다 먼저 가족이 함께 기준을 세우고, 콘텐츠 선택과 게임 사용 약속을 정리하는 자료입니다.",
+    keywords: ["가족 규칙", "미디어 약속", "게임 규칙", "쇼츠", "콘텐츠 선택", "WMQI"],
+    resourceIds: [
+      "family-media-rule-contract",
+      "smartphone-charging-zone",
+      "game-minimum-checklist",
+      "wmqi-content-evaluation-sheet",
+      "wmqi-youtuber-selection",
+    ],
+  },
+  {
+    id: "shortform-overuse-settings",
+    title: "숏폼을 너무 많이 보는 아이를 위한 설정들",
+    description:
+      "쇼츠가 계속 이어지는 흐름을 잠시 끊고, 추천 알고리즘과 시청 기록을 정리해 아이가 스스로 멈출 수 있는 환경을 만드는 설정 모음입니다.",
+    keywords: ["숏폼", "쇼츠", "유튜브", "시청기록", "알고리즘", "피드 제한"],
+    resourceIds: [
+      "youtube-shorts-hide-30days",
+      "youtube-shorts-feed-limit",
+      "youtube-watch-history-reset",
+    ],
+  },
+  {
+    id: "healthy-media-habits",
+    title: "건강한 미디어 이용 습관으로 시작하고 싶어요",
+    description:
+      "스마트폰을 내려놓는 환경, 좋은 콘텐츠를 고르는 기준, 알고리즘 조정, 짧은 시청 기록까지 건강한 이용 습관을 만드는 자료입니다.",
+    keywords: ["미디어 습관", "콘텐츠 평가", "유튜버 선택", "스마트폰존", "3줄 일지", "알고리즘"],
+    resourceIds: [
+      "smartphone-charging-zone",
+      "wmqi-youtuber-selection",
+      "wmqi-content-evaluation-sheet",
+      "youtube-feedback-controls",
+      "three-line-media-journal",
+    ],
+  },
 ];

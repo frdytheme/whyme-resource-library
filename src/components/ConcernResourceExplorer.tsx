@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ResourceCard } from "@/components/ResourceCard";
 import { Concern, ConcernId, Resource } from "@/types/resource";
@@ -27,25 +26,9 @@ function isConcernId(value: string | null, concerns: Concern[]): value is Concer
 export function ConcernResourceExplorer({ concerns, resources }: ConcernResourceExplorerProps) {
   const searchParams = useSearchParams();
   const concernParam = searchParams.get("concern");
-  const [query, setQuery] = useState("");
   const selectedConcern = isConcernId(concernParam, concerns) ? concernParam : null;
   const activeConcern = concerns.find((concern) => concern.id === selectedConcern);
-  const normalizedQuery = query.trim().toLowerCase();
-
-  const visibleConcerns = useMemo(() => {
-    if (!normalizedQuery) {
-      return featuredConcernIds
-        .map((id) => concerns.find((concern) => concern.id === id))
-        .filter((concern): concern is Concern => Boolean(concern));
-    }
-
-    return concerns.filter((concern) => {
-      const relatedResources = resources.filter((resource) =>
-        resource.relatedConcerns.includes(concern.id),
-      );
-      return createConcernSearchText(concern, relatedResources).includes(normalizedQuery);
-    });
-  }, [concerns, normalizedQuery, resources]);
+  const visibleConcerns = sortFeaturedFirst(concerns);
 
   const recommendedResources = activeConcern
     ? sortRecommendedFirst(
@@ -54,108 +37,126 @@ export function ConcernResourceExplorer({ concerns, resources }: ConcernResource
     : [];
 
   return (
-    <div className="grid gap-8 lg:grid-cols-[minmax(0,420px)_1fr]">
+    <>
       <section>
-        <div className="mb-4">
-          <label htmlFor="concern-search" className="text-lg font-semibold text-stone-950">
-            고민 검색
-          </label>
-          <input
-            id="concern-search"
-            type="search"
-            value={query}
-            onChange={(event) => setQuery(event.target.value)}
-            placeholder="예: 쇼츠, 현질, 디스코드, 댓글"
-            className="mt-3 w-full rounded-lg border border-[#F59E0B]/45 bg-white px-4 py-3 text-sm text-stone-950 outline-none transition focus:border-[#FF6B35] focus:ring-2 focus:ring-[#FF6B35]/15"
-          />
+        <div className="mb-5 max-w-2xl">
+          <h2 className="text-lg font-semibold text-stone-950">고민을 선택해보세요</h2>
           <p className="mt-2 text-sm leading-6 text-stone-500">
-            {normalizedQuery
-              ? `${visibleConcerns.length}개의 관련 고민을 찾았습니다.`
-              : "자주 찾는 대표 질문을 먼저 보여드립니다."}
+            지금 가장 가까운 상황을 고르면, 바로 이어서 볼 만한 추천 자료를 모아 보여드립니다.
           </p>
         </div>
 
-        <div className="grid gap-3">
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {visibleConcerns.map((concern) => {
             const isActive = concern.id === selectedConcern;
+            const count = recommendedCount(resources, concern.id);
 
             return (
               <Link
                 key={concern.id}
                 href={`/concerns?concern=${concern.id}`}
-                className={`rounded-lg border bg-white p-4 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#FF6B35] hover:shadow-md ${
+                className={`group flex min-h-[11rem] flex-col rounded-lg border bg-white p-5 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#FF6B35] hover:shadow-md ${
                   isActive ? "border-[#FF6B35] ring-2 ring-[#FF6B35]/15" : "border-orange-100"
                 }`}
               >
                 <div className="flex items-start justify-between gap-4">
-                  <h3 className="text-sm font-semibold leading-6 text-stone-950">{concern.title}</h3>
-                  <span className="shrink-0 rounded-md bg-stone-100 px-2 py-1 text-xs text-stone-600">
-                    {recommendedCount(resources, concern.id)}
+                  <h3 className="text-base font-semibold leading-6 text-stone-950 group-hover:text-[#FF6B35]">
+                    {concern.title}
+                  </h3>
+                  <span className="shrink-0 rounded-md bg-stone-100 px-2.5 py-1 text-xs font-medium text-stone-600">
+                    {count}개
                   </span>
                 </div>
-                <p className="mt-2 text-sm leading-6 text-stone-600">{concern.description}</p>
+                <p className="mt-3 line-clamp-3 text-sm leading-6 text-stone-600">
+                  {concern.description}
+                </p>
+                <span className="mt-auto pt-4 text-sm font-semibold text-[#0A7C6E]">
+                  추천 자료 보기
+                </span>
               </Link>
             );
           })}
         </div>
-
-        {visibleConcerns.length === 0 ? (
-          <div className="rounded-lg border border-orange-100 bg-white p-5 text-sm leading-6 text-stone-600">
-            검색된 고민이 없습니다. 다른 표현으로 다시 검색해보세요.
-          </div>
-        ) : null}
       </section>
 
-      <section>
-        <div className="mb-4">
-          <p className="text-sm font-medium text-[#0A7C6E]">추천 자료</p>
-          <h2 className="mt-1 text-2xl font-semibold text-stone-950">
-            {activeConcern?.title ?? "왼쪽에서 고민을 선택해보세요"}
-          </h2>
-          <p className="mt-2 text-sm leading-6 text-stone-600">
-            {activeConcern?.description ??
-              "현재 상황과 가장 가까운 고민을 고르면, 그 고민에 맞는 설정 가이드와 대화 자료를 보여드립니다."}
-          </p>
+      {activeConcern ? (
+        <div className="fixed inset-0 z-50 flex items-center justify-center px-4 py-6 sm:px-6">
+          <Link
+            href="/concerns"
+            aria-label="추천 자료 닫기"
+            className="absolute inset-0 bg-stone-950/55"
+          />
+          <section
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="concern-resource-modal-title"
+            className="relative z-10 flex max-h-[min(44rem,calc(100vh-2rem))] w-full max-w-5xl flex-col overflow-hidden rounded-lg bg-white shadow-2xl"
+          >
+            <div className="border-b border-orange-100 px-5 py-5 sm:px-6">
+              <div className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-sm font-medium text-[#0A7C6E]">추천 자료</p>
+                  <h2
+                    id="concern-resource-modal-title"
+                    className="mt-1 text-2xl font-semibold leading-tight text-stone-950"
+                  >
+                    {activeConcern.title}
+                  </h2>
+                  <p className="mt-2 max-w-2xl text-sm leading-6 text-stone-600">
+                    {activeConcern.description}
+                  </p>
+                </div>
+                <Link
+                  href="/concerns"
+                  aria-label="닫기"
+                  className="flex size-9 shrink-0 items-center justify-center rounded-md border border-stone-200 text-xl leading-none text-stone-500 transition hover:border-[#FF6B35] hover:text-[#FF6B35]"
+                >
+                  ×
+                </Link>
+              </div>
+            </div>
+
+            <div className="overflow-y-auto px-5 py-5 sm:px-6">
+              {recommendedResources.length > 0 ? (
+                <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+                  {recommendedResources.map((resource) => (
+                    <ResourceCard
+                      key={resource.id}
+                      resource={resource}
+                      href={`/resources/${resource.id}?from=concerns&concern=${activeConcern.id}`}
+                    />
+                  ))}
+                </div>
+              ) : (
+                <div className="rounded-lg border border-orange-100 bg-white p-5 text-sm leading-6 text-stone-600">
+                  이 고민과 연결된 자료가 아직 없습니다.
+                </div>
+              )}
+            </div>
+          </section>
         </div>
-
-        {!activeConcern ? (
-          <div className="rounded-lg border border-dashed border-orange-200 bg-white p-6 text-sm leading-6 text-stone-600">
-            검색 결과에서 가까운 고민을 선택하거나, 대표 질문 중 하나를 골라보세요.
-          </div>
-        ) : recommendedResources.length > 0 ? (
-          <div className="grid gap-4 sm:grid-cols-2">
-            {recommendedResources.map((resource) => (
-              <ResourceCard
-                key={resource.id}
-                resource={resource}
-                href={`/resources/${resource.id}?from=concerns&concern=${activeConcern.id}`}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className="rounded-lg border border-orange-100 bg-white p-5 text-sm leading-6 text-stone-600">
-            이 고민에 연결된 자료가 아직 없습니다.
-          </div>
-        )}
-      </section>
-    </div>
+      ) : null}
+    </>
   );
 }
 
-function createConcernSearchText(concern: Concern, relatedResources: Resource[]) {
-  return [
-    concern.title,
-    concern.description,
-    ...concern.keywords,
-    ...relatedResources.flatMap((resource) => [
-      resource.title,
-      resource.description,
-      ...resource.tags,
-      ...resource.keywords,
-    ]),
-  ]
-    .join(" ")
-    .toLowerCase();
+function sortFeaturedFirst(concerns: Concern[]) {
+  return [...concerns].sort((a, b) => {
+    const aIndex = featuredConcernIds.indexOf(a.id);
+    const bIndex = featuredConcernIds.indexOf(b.id);
+    const aFeatured = aIndex !== -1;
+    const bFeatured = bIndex !== -1;
+
+    if (aFeatured && bFeatured) {
+      return aIndex - bIndex;
+    }
+
+    if (aFeatured !== bFeatured) {
+      return aFeatured ? -1 : 1;
+    }
+
+    return 0;
+  });
 }
 
 function recommendedCount(resources: Resource[], concernId: ConcernId) {

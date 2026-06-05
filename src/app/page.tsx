@@ -1,8 +1,5 @@
 import Link from "next/link";
 import Image from "next/image";
-import { HomeSearch } from "@/components/HomeSearch";
-import { concerns } from "@/data/concerns";
-import { visibleResources } from "@/data/visibleResources";
 
 const kakaoChannelUrl = "https://linktr.ee/why_me_brand";
 
@@ -20,25 +17,22 @@ export default function Home() {
               우리 아이의 미디어 사용이 걱정될 때, 지금 필요한 자료를 고민별로 찾거나 전체
               자료실에서 천천히 살펴보세요.
             </p>
-
-            <HomeSearch concerns={concerns} resources={visibleResources} />
-
             <div className="mt-8 grid gap-3 sm:grid-cols-3">
               <Link
                 href="/packages"
-                className="rounded-lg border border-[#0A7C6E]/30 bg-white px-5 py-4 text-sm font-semibold text-[#0A7C6E] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#0A7C6E] hover:bg-[#F0FAF8] hover:shadow-md"
+                className="flex min-h-16 items-center justify-center rounded-lg border border-[#0A7C6E]/30 bg-white px-4 py-4 text-center text-sm font-semibold leading-5 text-[#0A7C6E] shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#0A7C6E] hover:bg-[#F0FAF8] hover:shadow-md"
               >
                 우리 아이 상황별 추천 설정
               </Link>
               <Link
                 href="/concerns"
-                className="rounded-lg border border-[#FF6B35] bg-[#FF6B35] px-5 py-4 text-sm font-semibold text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[#E85B2B] hover:shadow-md"
+                className="flex min-h-16 items-center justify-center rounded-lg border border-[#FF6B35] bg-[#FF6B35] px-4 py-4 text-center text-sm font-semibold leading-5 text-white shadow-sm transition duration-200 hover:-translate-y-0.5 hover:bg-[#E85B2B] hover:shadow-md"
               >
                 무엇이 필요하신가요?
               </Link>
               <Link
                 href="/resources"
-                className="rounded-lg border border-[#F59E0B]/45 bg-white px-5 py-4 text-sm font-semibold text-stone-950 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#FF6B35] hover:shadow-md"
+                className="flex min-h-16 items-center justify-center rounded-lg border border-[#F59E0B]/45 bg-white px-4 py-4 text-center text-sm font-semibold leading-5 text-stone-950 shadow-sm transition duration-200 hover:-translate-y-0.5 hover:border-[#FF6B35] hover:shadow-md"
               >
                 전체 자료 보기
               </Link>

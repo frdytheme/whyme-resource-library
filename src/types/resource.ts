@@ -63,6 +63,7 @@ export type Resource = {
   image?: string;
   imageGuideGroups?: ImageGuideGroup[];
   videoGuides?: VideoGuide[];
+  contentSections?: ContentSection[];
   youtubeId?: string;
   downloadUrl?: string;
 };
@@ -79,6 +80,11 @@ export type VideoGuide = {
   description?: string;
 };
 
+export type ContentSection = {
+  title: string;
+  body: string[];
+};
+
 export type Concern = {
   id: ConcernId;
   title: string;
@@ -93,7 +99,14 @@ export type PackageId =
   | "before-kakao-start"
   | "groupchat-safety"
   | "sns-account-start"
-  | "game-chat-safety";
+  | "game-chat-safety"
+  | "online-spending-risk"
+  | "stranger-dm-safety"
+  | "harmful-content-ad-safety"
+  | "school-violence-response"
+  | "family-media-rule-start"
+  | "shortform-overuse-settings"
+  | "healthy-media-habits";
 
 export type ResourcePackage = {
   id: PackageId;

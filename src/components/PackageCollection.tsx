@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { PackageId, ResourcePackage, Resource } from "@/types/resource";
 
@@ -10,7 +11,12 @@ type PackageCollectionProps = {
 };
 
 export function PackageCollection({ packages, resources }: PackageCollectionProps) {
-  const [openPackageId, setOpenPackageId] = useState<PackageId | "">(packages[0]?.id ?? "");
+  const searchParams = useSearchParams();
+  const packageParam = searchParams.get("package");
+  const initialPackageId = packages.some((resourcePackage) => resourcePackage.id === packageParam)
+    ? (packageParam as PackageId)
+    : packages[0]?.id ?? "";
+  const [openPackageId, setOpenPackageId] = useState<PackageId | "">(initialPackageId);
   const resourcesById = new Map(resources.map((resource) => [resource.id, resource]));
 
   return (
@@ -69,7 +75,7 @@ export function PackageCollection({ packages, resources }: PackageCollectionProp
                 {packageResources.map((resource, index) => (
                   <Link
                     key={resource.id}
-                    href={`/resources/${resource.id}?from=packages`}
+                    href={`/resources/${resource.id}?from=packages&package=${resourcePackage.id}`}
                     className="flex items-center gap-3 rounded-lg border border-orange-100 bg-white px-3 py-3 text-sm transition hover:border-[#FF6B35] hover:bg-[#FFF4EE]"
                   >
                     <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-md bg-[#FAFAFA] text-xs font-semibold text-stone-500">
