@@ -447,6 +447,23 @@ export const resources: Resource[] = [
     estimatedTime: "7분",
     recommendedAge: ["초등 저학년", "초등 고학년", "중학생"],
     videoGuides: [{ title: "영상 가이드", url: "" }],
+    imageGuideGroups: [
+      {
+        id: "pc",
+        label: "PC",
+        directory: "browser-ad-blocker-install",
+      },
+      {
+        id: "iphone",
+        label: "iPhone",
+        directory: "browser-ad-blocker-install/iphone",
+      },
+      {
+        id: "android",
+        label: "Android",
+        directory: "browser-ad-blocker-install/android",
+      },
+    ],
     image: "/images/guides/browser-ad-blocker-install.webp",
     isRecommended: true,
   },
