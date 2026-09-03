@@ -395,7 +395,7 @@ export const resources: Resource[] = [
     estimatedTime: "3분",
     recommendedAge: ["초등 저학년", "초등 고학년", "중학생"],
     videoGuides: [{ title: "영상 가이드", url: "https://youtu.be/VxLnc_4ambs" }],
-    image: "/images/guides/kakao-quiet-chatroom-setting.webp",
+    image: "/images/guides/kakao-quiet-chatroom-setting/cover.webp",
   },
   {
     id: "discord-sensitive-content-filter",
