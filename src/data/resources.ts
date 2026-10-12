@@ -78,7 +78,7 @@ export const resources: Resource[] = [
     estimatedTime: "3분",
     recommendedAge: ["초등 저학년", "초등 고학년", "중학생"],
     videoGuides: [{ title: "영상 가이드", url: "https://youtu.be/WjsvN0sp_GQ" }],
-    image: "/images/guides/youtube-shorts-hide-30days.webp",
+    image: "/images/guides/youtube-shorts-hide-30days/cover.webp",
     isRecommended: true,
   },
   {
@@ -96,7 +96,7 @@ export const resources: Resource[] = [
     estimatedTime: "5분",
     recommendedAge: ["초등 저학년", "초등 고학년", "중학생"],
     videoGuides: [{ title: "영상 가이드", url: "https://youtu.be/hiOj7I1dcJU" }],
-    image: "/images/guides/youtube-shorts-feed-limit.webp",
+    image: "/images/guides/youtube-shorts-feed-limit/cover.webp",
     isRecommended: true,
   },
   {
@@ -411,8 +411,8 @@ export const resources: Resource[] = [
     difficulty: "normal",
     estimatedTime: "5분",
     recommendedAge: ["초등 고학년", "중학생"],
-    videoGuides: [{ title: "영상 가이드", url: "https://youtu.be/pgyih6E716s" }],
-    image: "/images/guides/discord-sensitive-content.webp",
+    videoGuides: [{ title: "영상 가이드", url: "https://youtu.be/52fE03gVovw" }],
+    image: "/images/guides/discord-sensitive-content-filter/cover.webp",
     isRecommended: true,
   },
   {
@@ -429,8 +429,8 @@ export const resources: Resource[] = [
     difficulty: "normal",
     estimatedTime: "5분",
     recommendedAge: ["초등 고학년", "중학생"],
-    videoGuides: [{ title: "영상 가이드", url: "" }],
-    image: "/images/guides/discord-dm-filtering.webp",
+    videoGuides: [{ title: "영상 가이드", url: "https://youtu.be/GfbPvpleVYw" }],
+    image: "/images/guides/discord-dm-filtering/cover.webp",
   },
   {
     id: "browser-ad-blocker-install",
