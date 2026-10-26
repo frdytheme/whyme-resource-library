@@ -188,6 +188,22 @@ export const resources: Resource[] = [
     isRecommended: true,
   },
   {
+    id: "instagram-dm-filtering",
+    title: "인스타그램 DM 필터링 설정",
+    category: "platform_safety",
+    subCategory: "instagram",
+    type: "setting_guide",
+    description:
+      "메시지 요청과 그룹 채팅 초대 범위를 설정하고, 원치 않는 메시지 요청을 숨겨 낯선 사람의 연락을 줄이는 가이드입니다.",
+    keywords: ["인스타그램", "DM", "메시지 요청", "그룹 채팅", "연락 제한"],
+    tags: ["DM 관리", "연락 제한", "SNS 안전"],
+    relatedConcerns: ["sns_exposure", "stranger_contact", "grooming_risk"],
+    difficulty: "easy",
+    estimatedTime: "3분",
+    recommendedAge: ["중학생", "고등학생"],
+    image: "/images/guides/instagram-dm-filtering/cover.webp",
+  },
+  {
     id: "instagram-comment-filter",
     title: "인스타그램 원치 않는 댓글 숨기기",
     category: "platform_safety",

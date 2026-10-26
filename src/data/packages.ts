@@ -62,12 +62,13 @@ export const packages: ResourcePackage[] = [
     id: "sns-account-start",
     title: "인스타그램 필수 기본 설정",
     description:
-      "인스타그램 게시물, 태그, 댓글, 프로필 사진 노출 등 안전을 위한 기본 설정을 점검하세요.",
-    keywords: ["SNS", "인스타그램", "카카오톡", "카톡", "태그", "댓글", "프로필", "개인정보"],
+      "인스타그램 계정 공개 범위, 태그·언급, 댓글, DM 허용 범위 등 안전을 위한 기본 설정을 점검하세요.",
+    keywords: ["SNS", "인스타그램", "카카오톡", "카톡", "태그", "댓글", "프로필", "개인정보", "DM"],
     resourceIds: [
       "instagram-private-account",
       "instagram-tag-mention-limit",
       "instagram-comment-filter",
+      "instagram-dm-filtering",
     ],
   },
   {
@@ -106,6 +107,7 @@ export const packages: ResourcePackage[] = [
       "kakao-phone-number-friend-block",
       "discord-dm-filtering",
       "instagram-private-account",
+      "instagram-dm-filtering",
       "grooming-checklist",
     ],
   },
