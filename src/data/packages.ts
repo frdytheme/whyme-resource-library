@@ -33,9 +33,10 @@ export const packages: ResourcePackage[] = [
     id: "before-kakao-start",
     title: "카카오톡 처음 쓰기 전 점검할 설정",
     description:
-      "카카오톡을 처음 쓰기 시작할 때 프로필, 친구추가, 단톡방 초대, 대화 안전 기능을 함께 확인하세요.",
+      "카카오톡을 처음 쓰기 시작할 때 프로필, 친구추가, 단톡방 초대, 패밀리 계정 자녀 보호와 대화 안전 기능을 함께 확인하세요.",
     keywords: ["카카오톡", "카톡", "처음", "프로필", "친구추가", "단톡방", "톡사이렌"],
     resourceIds: [
+      "kakao-family-account-safety",
       "kakao-talk-siren",
       "kakao-profile-photo-visibility",
       "kakao-profile-photo-private-only",
@@ -103,6 +104,7 @@ export const packages: ResourcePackage[] = [
       "카카오톡, 인스타그램, 디스코드에서 낯선 사람과 연결되는 접점을 줄이고 위험 신호를 살펴보는 자료입니다.",
     keywords: ["DM", "낯선 사람", "카카오톡", "인스타그램", "디스코드", "그루밍"],
     resourceIds: [
+      "kakao-family-account-safety",
       "kakao-talk-siren",
       "kakao-phone-number-friend-block",
       "discord-dm-filtering",
@@ -157,12 +159,13 @@ export const packages: ResourcePackage[] = [
     id: "shortform-overuse-settings",
     title: "숏폼을 너무 많이 보는 아이를 위한 설정들",
     description:
-      "쇼츠가 계속 이어지는 흐름을 잠시 끊고, 추천 알고리즘과 시청 기록을 정리해 아이가 스스로 멈출 수 있는 환경을 만드는 설정 모음입니다.",
-    keywords: ["숏폼", "쇼츠", "유튜브", "시청기록", "알고리즘", "피드 제한"],
+      "유튜브 쇼츠 노출과 추천 알고리즘을 조정하고, 카카오톡 숏폼 이용을 제한해 짧은 영상이 계속 이어지는 흐름을 줄이는 설정 모음입니다.",
+    keywords: ["숏폼", "쇼츠", "유튜브", "시청기록", "알고리즘", "피드 제한", "카카오톡", "패밀리 계정"],
     resourceIds: [
       "youtube-shorts-hide-30days",
       "youtube-shorts-feed-limit",
       "youtube-watch-history-reset",
+      "kakao-family-account-safety",
     ],
   },
   {

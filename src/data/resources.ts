@@ -220,6 +220,22 @@ export const resources: Resource[] = [
     image: "/images/guides/instagram-comment-filter.webp",
   },
   {
+    id: "kakao-family-account-safety",
+    title: "카카오톡 숏폼·오픈채팅 이용 제한 (패밀리 계정)",
+    category: "platform_safety",
+    subCategory: "kakao",
+    type: "setting_guide",
+    description:
+      "패밀리 계정으로 자녀 계정을 연결해 부모의 카카오톡에서 숏폼과 오픈채팅 이용 범위를 관리하는 가이드입니다. 오픈채팅 이용 제한은 이미 참여 중인 채팅방에는 적용되지 않습니다.",
+    keywords: ["카카오톡", "패밀리 계정", "자녀 보호", "숏폼", "오픈채팅", "이용 제한"],
+    tags: ["자녀 보호", "숏폼 제한", "오픈채팅 관리"],
+    relatedConcerns: ["shorts_overuse", "stranger_contact"],
+    difficulty: "normal",
+    estimatedTime: "5분",
+    recommendedAge: ["초등 저학년", "초등 고학년", "중학생"],
+    image: "/images/guides/kakao-family-account-safety/cover.webp",
+  },
+  {
     id: "kakao-talk-siren",
     title: "카카오톡 톡사이렌",
     category: "platform_safety",
