@@ -63,13 +63,16 @@ export const packages: ResourcePackage[] = [
     id: "sns-account-start",
     title: "인스타그램 필수 기본 설정",
     description:
-      "인스타그램 계정 공개 범위, 태그·언급, 댓글, DM 허용 범위 등 안전을 위한 기본 설정을 점검하세요.",
+      "인스타그램 계정 공개 범위, 태그·언급, 댓글, DM 허용 범위를 점검하고 민감한 콘텐츠와 추천 게시물까지 관리하는 기본 설정 모음입니다.",
     keywords: ["SNS", "인스타그램", "카카오톡", "카톡", "태그", "댓글", "프로필", "개인정보", "DM"],
     resourceIds: [
       "instagram-private-account",
       "instagram-tag-mention-limit",
       "instagram-comment-filter",
       "instagram-dm-filtering",
+      "instagram-sensitive-content-filter",
+      "instagram-suggested-posts-hide-30days",
+      "instagram-recommendations-reset",
     ],
   },
   {
@@ -124,6 +127,8 @@ export const packages: ResourcePackage[] = [
       "youtube-feedback-controls",
       "discord-sensitive-content-filter",
       "browser-ad-blocker-install",
+      "instagram-sensitive-content-filter",
+      "instagram-recommendations-reset",
       "media-yellow-list",
     ],
   },
@@ -180,6 +185,8 @@ export const packages: ResourcePackage[] = [
       "wmqi-content-evaluation-sheet",
       "youtube-feedback-controls",
       "three-line-media-journal",
+      "instagram-suggested-posts-hide-30days",
+      "instagram-recommendations-reset",
     ],
   },
 ];
